@@ -1,0 +1,24 @@
+{
+    "name": "nous/wp-css-audit",
+    "description": "WordPress CSS Audit Tool - Scans themes for hard-coded elements and provides live CSS editor",
+    "type": "wordpress-plugin",
+    "require": {
+        "php": ">=8.2"
+    },
+    "autoload": {
+        "psr-4": {
+            "Nous\\WpCssAudit\\": "src/"
+        }
+    },
+    "authors": [
+        {
+            "name": "Maxx",
+            "email": "dev@nousresearch.com"
+        }
+    ],
+    "scripts": {
+        "post-install-cmd": [
+            "echo 'CSS Audit plugin installed. Activate from WP Admin > Plugins.'"
+        ]
+    }
+}

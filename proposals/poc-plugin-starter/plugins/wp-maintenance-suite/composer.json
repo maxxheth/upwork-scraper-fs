@@ -1,0 +1,24 @@
+{
+    "name": "nous/wp-maintenance-suite",
+    "description": "WordPress Maintenance Suite - Security audit, performance reports, WooCommerce test data, update testing",
+    "type": "wordpress-plugin",
+    "require": {
+        "php": ">=8.2"
+    },
+    "autoload": {
+        "psr-4": {
+            "Nous\\WpMaintenanceSuite\\": "src/"
+        }
+    },
+    "authors": [
+        {
+            "name": "Maxx",
+            "email": "dev@nousresearch.com"
+        }
+    ],
+    "scripts": {
+        "post-install-cmd": [
+            "echo 'Maintenance Suite plugin installed. Activate from WP Admin > Plugins.'"
+        ]
+    }
+}

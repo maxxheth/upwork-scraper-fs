@@ -1,0 +1,24 @@
+{
+    "name": "nous/wp-custom-theme-kit",
+    "description": "Custom Theme Development Kit - ACF field groups, CPTs, form handling, Tailwind CSS pipeline",
+    "type": "wordpress-plugin",
+    "require": {
+        "php": ">=8.2"
+    },
+    "autoload": {
+        "psr-4": {
+            "Nous\\WpCustomThemeKit\\": "src/"
+        }
+    },
+    "authors": [
+        {
+            "name": "Maxx",
+            "email": "dev@nousresearch.com"
+        }
+    ],
+    "scripts": {
+        "post-install-cmd": [
+            "echo 'Custom Theme Kit plugin installed. Activate from WP Admin > Plugins.'"
+        ]
+    }
+}

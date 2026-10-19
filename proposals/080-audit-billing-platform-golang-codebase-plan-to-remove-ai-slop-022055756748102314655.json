@@ -1,0 +1,75 @@
+{
+  "schema_version": "1.0",
+  "id": "022055756748102314655",
+  "source": {
+    "system": "upwork-scraper-fs",
+    "source_file": "upwork_Audit_Billing_Platform_(Golang_codebase)_p1_20260701_000037.json",
+    "query": "Audit Billing Platform (Golang codebase)"
+  },
+  "job": {
+    "id": "022055756748102314655",
+    "title": "Audit Billing Platform (Golang codebase), Plan to Remove AI Slop",
+    "url": "https://www.upwork.com/jobs/Audit-Billing-Platform-span-class-highlight-Golang-span-codebase-Plan-Remove-Slop_~022055756748102314655/?referrer_url_path=/nx/search/jobs/",
+    "description": "I am building an authentication library and a billing platform in Golang + Postgres. Auth-library is embedded only, while billing can be an embedded-library, and also a stand-alone application. The platform is intended to make it easy for Go-devs to write authentication (users register, OIDC, recover password, etc.), and manage billing their users (various billing providers in addition to Stripe, including crypto). These codebases are mostly written by AI (Claude Code and Codex) but the issue is that these tools suck. The write a lot of slop, and their systems don't work, and I don't trust them. With auth + billing, these are highly sensitive areas where we cannot afford to fuck up. Deliverables are: 1. a list of tasks the LLMs must do to refactor / fix these systems 2. a complete audit of all APIs (the surface areas / shapes that are used as system boundaries) 3. integration tests that will pass, if the LLM's code is correct 4. a complete security audit, to address any vulnerabilities / exploits possible I am only looking to hire someone in California / colorado. I want to work synchronously with them; for every hour you bill we'll be on a call together so that we can maximize communication bandwidth. I live in Denver, but I plan to move to SF soon. I'd be down to work together in person in the future, but for now we'll only be working synchronously-remotely. Human-written applications only. Template or LLM-written responses here will be rejected immediately. Please list your qualifications concisely. Don't say 'I am a Golang expert' say 'I worked at company X, and built system Y in Go which does Z.' Thanks for your time.",
+    "contract_type": "hourly",
+    "budget": "",
+    "hourly_rate": "$50.00 - $110.00",
+    "rate_range": "$50.00 - $110.00",
+    "experience_level": "Expert",
+    "duration": "1-3 months",
+    "skills": [
+      "Golang",
+      "PostgreSQL",
+      "Database",
+      "API"
+    ],
+    "posted": "2 months ago",
+    "proposals": "10 to 15"
+  },
+  "client": {
+    "country": "",
+    "rating": null,
+    "reviews": null,
+    "hires": 156,
+    "spent": "$580K"
+  },
+  "analysis": {
+    "score": 80,
+    "label": "🔥 HOT",
+    "fit": "hot",
+    "reasoning": [
+      "Overall score is 80/100 (🔥 HOT).",
+      "Rate/budget signal: $50.00 - $110.00.",
+      "Portfolio skill matches: api, golang, postgresql.",
+      "Client spend signal: $580K.",
+      "Client hire history: 156 hires.",
+      "Competition signal: 10 to 15 proposals.",
+      "Recency signal: approximately 60 day(s) old."
+    ]
+  },
+  "proposal": {
+    "subject": "Golang Developer — Audit Billing Platform (Golang codebase), Plan to Remove AI",
+    "body": "Hi there,\n\nI read your post about i am building an authentication library and a billing platform in golang + postgres.. I build production systems in Go — APIs, CLIs, and backend services.\n\nMy approach to this type of work:\n1. Start with a clear audit of the existing codebase\n2. Identify the critical issues and prioritize fixes\n3. Build incrementally with tests at each step\n\nI prefer to start with a small, well-defined scope and prove the approach works before expanding.\n\nHappy to discuss your specific requirements.\n\nBest,\nMaxx",
+    "full_text": "Subject: Golang Developer — Audit Billing Platform (Golang codebase), Plan to Remove AI \n\nHi there,\n\nI read your post about i am building an authentication library and a billing platform in golang + postgres.. I build production systems in Go — APIs, CLIs, and backend services.\n\nMy approach to this type of work:\n1. Start with a clear audit of the existing codebase\n2. Identify the critical issues and prioritize fixes\n3. Build incrementally with tests at each step\n\nI prefer to start with a small, well-defined scope and prove the approach works before expanding.\n\nHappy to discuss your specific requirements.\n\nBest,\nMaxx",
+    "tone": "professional, concise, technical"
+  },
+  "portfolio_references": [
+    {
+      "title": "UpWork Scraper",
+      "url": "",
+      "description": "Python scraping pipeline for JS-rendered pages, Cloudflare bypass, and proxy rotation."
+    },
+    {
+      "title": "UpWork Buddy",
+      "url": "",
+      "description": "Go/PostgreSQL backend and TypeScript browser assistant for job analysis workflow."
+    }
+  ],
+  "status": "ready",
+  "timestamps": {
+    "created_at": "2026-07-06T02:19:16.788849+00:00",
+    "updated_at": "2026-07-06T02:19:16.788849+00:00",
+    "submitted_at": null,
+    "rejected_at": null
+  }
+}

@@ -1,0 +1,2454 @@
+{
+  "view_type": "search_results",
+  "url": "https://www.upwork.com/nx/search/jobs/?q=wordpress&sort=recency",
+  "title": "Search Freelance Jobs on Upwork",
+  "timestamp": "2026-10-19T18:57:45.174354+00:00",
+  "is_authenticated": false,
+  "status_code": 200,
+  "proxy_used": "Direct (No Proxy)",
+  "screenshot_path": "output/ui_reports/screenshots/upwork_20261019_185744.png",
+  "job_card_blueprint": {
+    "container_selector": "article.job-tile",
+    "total_cards_detected": 10,
+    "discovered_hooks": {
+      "data-v:data-v-6c5a9165": {
+        "hook_type": "data-v",
+        "name": "data-v-6c5a9165",
+        "tag": "div",
+        "sample_text": "Back-End DevelopmentCloudflareWeb DevelopmentHTMLWebsite",
+        "frequency": 25,
+        "sample_values": []
+      },
+      "data-v:data-v-b5e042b2": {
+        "hook_type": "data-v",
+        "name": "data-v-b5e042b2",
+        "tag": "div",
+        "sample_text": "Posted 2 hours agoCloudflare Pages Developer: Move Website Assets Off WordPress & Host New Static Si",
+        "frequency": 15,
+        "sample_values": []
+      },
+      "data-v:data-v-9d43742e": {
+        "hook_type": "data-v",
+        "name": "data-v-9d43742e",
+        "tag": "article",
+        "sample_text": "Posted 2 hours agoCloudflare Pages Developer: Move Website Assets Off WordPress & Host New Static Si",
+        "frequency": 14,
+        "sample_values": []
+      },
+      "air3-class:air3-token-wrap": {
+        "hook_type": "air3-class",
+        "name": "air3-token-wrap",
+        "tag": "div",
+        "sample_text": "Back-End Development",
+        "frequency": 14,
+        "sample_values": []
+      },
+      "data-test:token": {
+        "hook_type": "data-test",
+        "name": "token",
+        "tag": "button",
+        "sample_text": "Back-End Development",
+        "frequency": 14,
+        "sample_values": [
+          "Back-End Development",
+          "Cloudflare",
+          "Web Development",
+          "HTML",
+          "Website"
+        ]
+      },
+      "air3-class:air3-token": {
+        "hook_type": "air3-class",
+        "name": "air3-token",
+        "tag": "button",
+        "sample_text": "Back-End Development",
+        "frequency": 14,
+        "sample_values": []
+      },
+      "air3-class:air3-line-clamp-wrapper": {
+        "hook_type": "air3-class",
+        "name": "air3-line-clamp-wrapper",
+        "tag": "div",
+        "sample_text": "Cloudflare Pages Developer: Move Website Assets Off WordPress & Host New Static Site (Fixed Price)",
+        "frequency": 11,
+        "sample_values": []
+      },
+      "air3-class:air3-line-clamp": {
+        "hook_type": "air3-class",
+        "name": "air3-line-clamp",
+        "tag": "div",
+        "sample_text": "Cloudflare Pages Developer: Move Website Assets Off WordPress & Host New Static Site (Fixed Price)",
+        "frequency": 11,
+        "sample_values": []
+      },
+      "data-test:JobTile": {
+        "hook_type": "data-test",
+        "name": "JobTile",
+        "tag": "article",
+        "sample_text": "Posted 2 hours agoCloudflare Pages Developer: Move Website Assets Off WordPress & Host New Static Si",
+        "frequency": 10,
+        "sample_values": [
+          "Posted 2 hours agoCloudflare Pages Developer: Move Website Assets Off WordPress & Host New Static Si",
+          "Posted 2 hours agoExisting Sites Need Revamp And New Site DevelopmentHourlyIntermediateEst. time:3 t",
+          "Posted yesterdayQuick Fix: Resolve Stripe Form & Text Page Layout/Script Conflict on WordPress SiteF",
+          "Posted yesterdaystructuring a new eccomerce site at HostingHourly: $20.00 - $40.00 IntermediateEst. ",
+          "Posted yesterdayLead generation Web designerFixed priceIntermediateEst. budget:$1,500.00seeking an e"
+        ]
+      },
+      "air3-class:air3-card": {
+        "hook_type": "air3-class",
+        "name": "air3-card",
+        "tag": "article",
+        "sample_text": "Posted 2 hours agoCloudflare Pages Developer: Move Website Assets Off WordPress & Host New Static Si",
+        "frequency": 10,
+        "sample_values": []
+      },
+      "air3-class:air3-card-list": {
+        "hook_type": "air3-class",
+        "name": "air3-card-list",
+        "tag": "article",
+        "sample_text": "Posted 2 hours agoCloudflare Pages Developer: Move Website Assets Off WordPress & Host New Static Si",
+        "frequency": 10,
+        "sample_values": []
+      },
+      "data-test:JobTileHeader": {
+        "hook_type": "data-test",
+        "name": "JobTileHeader",
+        "tag": "div",
+        "sample_text": "Posted 2 hours agoCloudflare Pages Developer: Move Website Assets Off WordPress & Host New Static Si",
+        "frequency": 10,
+        "sample_values": [
+          "Posted 2 hours agoCloudflare Pages Developer: Move Website Assets Off WordPress & Host New Static Si",
+          "Posted 2 hours agoExisting Sites Need Revamp And New Site Development",
+          "Posted yesterdayQuick Fix: Resolve Stripe Form & Text Page Layout/Script Conflict on WordPress Site",
+          "Posted yesterdaystructuring a new eccomerce site at Hosting",
+          "Posted yesterdayLead generation Web designer"
+        ]
+      },
+      "data-test:JobTile15in24Header": {
+        "hook_type": "data-test",
+        "name": "JobTile15in24Header",
+        "tag": "div",
+        "sample_text": "Posted 2 hours ago",
+        "frequency": 10,
+        "sample_values": [
+          "Posted 2 hours ago",
+          "Posted yesterday",
+          "Posted 2 days ago"
+        ]
+      },
+      "data-test:job-pubilshed-date": {
+        "hook_type": "data-test",
+        "name": "job-pubilshed-date",
+        "tag": "small",
+        "sample_text": "Posted 2 hours ago",
+        "frequency": 10,
+        "sample_values": [
+          "Posted 2 hours ago",
+          "Posted yesterday",
+          "Posted 2 days ago"
+        ]
+      },
+      "data-test:UpCLineClamp": {
+        "hook_type": "data-test",
+        "name": "UpCLineClamp",
+        "tag": "div",
+        "sample_text": "Cloudflare Pages Developer: Move Website Assets Off WordPress & Host New Static Site (Fixed Price)",
+        "frequency": 10,
+        "sample_values": [
+          "Cloudflare Pages Developer: Move Website Assets Off WordPress & Host New Static Site (Fixed Price)",
+          "Existing Sites Need Revamp And New Site Development",
+          "Quick Fix: Resolve Stripe Form & Text Page Layout/Script Conflict on WordPress Site",
+          "structuring a new eccomerce site at Hosting",
+          "Lead generation Web designer"
+        ]
+      },
+      "data-test:job-tile-title-link UpCLink": {
+        "hook_type": "data-test",
+        "name": "job-tile-title-link UpCLink",
+        "tag": "a",
+        "sample_text": "Cloudflare Pages Developer: Move Website Assets Off WordPress & Host New Static Site (Fixed Price)",
+        "frequency": 10,
+        "sample_values": [
+          "Cloudflare Pages Developer: Move Website Assets Off WordPress & Host New Static Site (Fixed Price)",
+          "Existing Sites Need Revamp And New Site Development",
+          "Quick Fix: Resolve Stripe Form & Text Page Layout/Script Conflict on WordPress Site",
+          "structuring a new eccomerce site at Hosting",
+          "Lead generation Web designer"
+        ]
+      },
+      "air3-class:air3-link": {
+        "hook_type": "air3-class",
+        "name": "air3-link",
+        "tag": "a",
+        "sample_text": "Cloudflare Pages Developer: Move Website Assets Off WordPress & Host New Static Site (Fixed Price)",
+        "frequency": 10,
+        "sample_values": []
+      },
+      "air3-class:air3-link-primary": {
+        "hook_type": "air3-class",
+        "name": "air3-link-primary",
+        "tag": "a",
+        "sample_text": "Cloudflare Pages Developer: Move Website Assets Off WordPress & Host New Static Site (Fixed Price)",
+        "frequency": 10,
+        "sample_values": []
+      },
+      "data-test:JobTileDetails": {
+        "hook_type": "data-test",
+        "name": "JobTileDetails",
+        "tag": "div",
+        "sample_text": "Fixed priceIntermediateEst. budget:$250.00Source Communications is an independently owned advertisin",
+        "frequency": 10,
+        "sample_values": [
+          "Fixed priceIntermediateEst. budget:$250.00Source Communications is an independently owned advertisin",
+          "HourlyIntermediateEst. time:3 to 6 months, Less than 30 hrs/weekWeb Designer Needed to Redesign Mult",
+          "Fixed priceIntermediateEst. budget:$40.00JOB DESCRIPTION: I need an experienced front-end WordPress ",
+          "Hourly: $20.00 - $40.00 IntermediateEst. time:Less than 1 month, Less than 30 hrs/weekI need someone",
+          "Fixed priceIntermediateEst. budget:$1,500.00seeking an experienced website professional to build a w"
+        ]
+      },
+      "data-test:JobInfo": {
+        "hook_type": "data-test",
+        "name": "JobInfo",
+        "tag": "ul",
+        "sample_text": "Fixed priceIntermediateEst. budget:$250.00",
+        "frequency": 10,
+        "sample_values": [
+          "Fixed priceIntermediateEst. budget:$250.00",
+          "HourlyIntermediateEst. time:3 to 6 months, Less than 30 hrs/week",
+          "Fixed priceIntermediateEst. budget:$40.00",
+          "Hourly: $20.00 - $40.00 IntermediateEst. time:Less than 1 month, Less than 30 hrs/week",
+          "Fixed priceIntermediateEst. budget:$1,500.00"
+        ]
+      },
+      "data-test:job-type-label": {
+        "hook_type": "data-test",
+        "name": "job-type-label",
+        "tag": "li",
+        "sample_text": "Fixed price",
+        "frequency": 10,
+        "sample_values": [
+          "Fixed price",
+          "Hourly",
+          "Hourly: $20.00 - $40.00",
+          "Hourly: $50.00 - $75.00"
+        ]
+      },
+      "data-test:experience-level": {
+        "hook_type": "data-test",
+        "name": "experience-level",
+        "tag": "li",
+        "sample_text": "Intermediate",
+        "frequency": 10,
+        "sample_values": [
+          "Intermediate",
+          "Expert"
+        ]
+      },
+      "data-test:is-fixed-price": {
+        "hook_type": "data-test",
+        "name": "is-fixed-price",
+        "tag": "li",
+        "sample_text": "Est. budget:$250.00",
+        "frequency": 6,
+        "sample_values": [
+          "Est. budget:$250.00",
+          "Est. budget:$40.00",
+          "Est. budget:$1,500.00",
+          "Est. budget:$200.00"
+        ]
+      },
+      "data-test:UpCLineClamp JobDescription": {
+        "hook_type": "data-test",
+        "name": "UpCLineClamp JobDescription",
+        "tag": "div",
+        "sample_text": "Source Communications is an independently owned advertising and sports marketing agency. We have a n",
+        "frequency": 10,
+        "sample_values": [
+          "Source Communications is an independently owned advertising and sports marketing agency. We have a n",
+          "Web Designer Needed to Redesign Multiple Websites \u2014 AI-Assisted Design Preferred Project Overview We",
+          "JOB DESCRIPTION: I need an experienced front-end WordPress developer to resolve a specific front-end",
+          "I need someone to place the elements on the website and make the e-commerce connections/buttons and ",
+          "seeking an experienced website professional to build a website that generates qualified homeowner ca"
+        ]
+      },
+      "data-test:TokenClamp JobAttrs": {
+        "hook_type": "data-test",
+        "name": "TokenClamp JobAttrs",
+        "tag": "div",
+        "sample_text": "Back-End DevelopmentCloudflareWeb DevelopmentHTMLWebsite",
+        "frequency": 10,
+        "sample_values": [
+          "Back-End DevelopmentCloudflareWeb DevelopmentHTMLWebsite",
+          "WordPressWeb DesignWeb DevelopmentPHPJavaScriptDashboardai coding assistants",
+          "WordPressJavaScriptFront-End Development FrameworkCSS",
+          "PayPalStripeWeb Development",
+          "Lead GenerationWeb DesignSocial Media MarketingCustomer Relationship ManagementLinkedIn"
+        ]
+      },
+      "air3-class:air3-token-container": {
+        "hook_type": "air3-class",
+        "name": "air3-token-container",
+        "tag": "div",
+        "sample_text": "Back-End DevelopmentCloudflareWeb DevelopmentHTMLWebsite",
+        "frequency": 10,
+        "sample_values": []
+      },
+      "data-test:duration-label": {
+        "hook_type": "data-test",
+        "name": "duration-label",
+        "tag": "li",
+        "sample_text": "Est. time:3 to 6 months, Less than 30 hrs/week",
+        "frequency": 4,
+        "sample_values": [
+          "Est. time:3 to 6 months, Less than 30 hrs/week",
+          "Est. time:Less than 1 month, Less than 30 hrs/week",
+          "Est. time:1 to 3 months, Less than 30 hrs/week"
+        ]
+      }
+    },
+    "sample_card_data": {
+      "title": "Cloudflare Pages Developer: Move Website Assets Off WordPress & Host New Static Site (Fixed Price)",
+      "href": "/jobs/Cloudflare-Pages-Developer-Move-Website-Assets-Off-span-class-highlight-WordPress-span-amp-Host-New-Static-Site-Fixed-Price_~022112225892746435112/?referrer_url_path=/nx/search/jobs/",
+      "description": "Source Communications is an independently owned advertising and sports marketing agency. We have a new website built as a single static HTML",
+      "rate": "Fixed price",
+      "skills": [
+        "Back-End Development",
+        "Cloudflare",
+        "Web Development",
+        "HTML",
+        "Website"
+      ]
+    }
+  },
+  "all_hooks": [
+    {
+      "hook_type": "data-v",
+      "name": "data-v-6f94212a",
+      "tag": "div",
+      "sample_text": "CATEGORIES AI & Automation Development & IT Design & Creative Marketing Data & Analytics Admin & sup",
+      "frequency": 777,
+      "sample_values": []
+    },
+    {
+      "hook_type": "data-v",
+      "name": "data-v-6c5a9165",
+      "tag": "div",
+      "sample_text": "Back-End DevelopmentCloudflareWeb DevelopmentHTMLWebsite",
+      "frequency": 154,
+      "sample_values": []
+    },
+    {
+      "hook_type": "data-test",
+      "name": "pathfinder-item-link",
+      "tag": "a",
+      "sample_text": "AI Video Creators & EditorsGenerate and edit AI-powered video",
+      "frequency": 137,
+      "sample_values": [
+        "AI Video Creators & EditorsGenerate and edit AI-powered video",
+        "AI Integration DevelopersConnect AI to your existing tools",
+        "Chatbot developersBuild AI for support and sales",
+        "Machine learning engineersModels that learn from your data",
+        "AI DevelopersCustom AI-powered apps and features"
+      ]
+    },
+    {
+      "hook_type": "data-test",
+      "name": "pathfinder-item-label",
+      "tag": "strong",
+      "sample_text": "AI Video Creators & Editors",
+      "frequency": 137,
+      "sample_values": [
+        "AI Video Creators & Editors",
+        "AI Integration Developers",
+        "Chatbot developers",
+        "Machine learning engineers",
+        "AI Developers"
+      ]
+    },
+    {
+      "hook_type": "data-test",
+      "name": "pathfinder-desc",
+      "tag": "span",
+      "sample_text": "Generate and edit AI-powered video",
+      "frequency": 137,
+      "sample_values": [
+        "Generate and edit AI-powered video",
+        "Connect AI to your existing tools",
+        "Build AI for support and sales",
+        "Models that learn from your data",
+        "Custom AI-powered apps and features"
+      ]
+    },
+    {
+      "hook_type": "air3-class",
+      "name": "air3-icon",
+      "tag": "div",
+      "sample_text": null,
+      "frequency": 60,
+      "sample_values": []
+    },
+    {
+      "hook_type": "data-v",
+      "name": "data-v-b5e042b2",
+      "tag": "div",
+      "sample_text": "Posted 2 hours agoCloudflare Pages Developer: Move Website Assets Off WordPress & Host New Static Si",
+      "frequency": 60,
+      "sample_values": []
+    },
+    {
+      "hook_type": "data-v",
+      "name": "data-v-9d43742e",
+      "tag": "article",
+      "sample_text": "Posted 2 hours agoCloudflare Pages Developer: Move Website Assets Off WordPress & Host New Static Si",
+      "frequency": 50,
+      "sample_values": []
+    },
+    {
+      "hook_type": "air3-class",
+      "name": "air3-token-wrap",
+      "tag": "div",
+      "sample_text": "Back-End Development",
+      "frequency": 48,
+      "sample_values": []
+    },
+    {
+      "hook_type": "data-test",
+      "name": "token",
+      "tag": "button",
+      "sample_text": "Back-End Development",
+      "frequency": 48,
+      "sample_values": [
+        "Back-End Development",
+        "Cloudflare",
+        "Web Development",
+        "HTML",
+        "Website"
+      ]
+    },
+    {
+      "hook_type": "air3-class",
+      "name": "air3-token",
+      "tag": "button",
+      "sample_text": "Back-End Development",
+      "frequency": 48,
+      "sample_values": []
+    },
+    {
+      "hook_type": "data-v",
+      "name": "data-v-55463145",
+      "tag": "li",
+      "sample_text": "Why Upwork Learn about Upwork Get to know the platform built for the future of work RESOURCESSuccess",
+      "frequency": 47,
+      "sample_values": []
+    },
+    {
+      "hook_type": "data-v",
+      "name": "data-v-749276bb",
+      "tag": "li",
+      "sample_text": "Get outcomes Drive larger-scale work Build specialized teams for complex projects OUTCOMES Build my ",
+      "frequency": 33,
+      "sample_values": []
+    },
+    {
+      "hook_type": "data-v",
+      "name": "data-v-5ded1141",
+      "tag": "label",
+      "sample_text": "Custom USDMinimum hourly job rate per hour/hrCustom USDMaximum hourly job rate per hour/hr",
+      "frequency": 30,
+      "sample_values": []
+    },
+    {
+      "hook_type": "data-test",
+      "name": "UpCIcon",
+      "tag": "div",
+      "sample_text": null,
+      "frequency": 26,
+      "sample_values": []
+    },
+    {
+      "hook_type": "air3-class",
+      "name": "air3-checkbox-label",
+      "tag": "label",
+      "sample_text": "Entry Level (9)",
+      "frequency": 22,
+      "sample_values": []
+    },
+    {
+      "hook_type": "air3-class",
+      "name": "air3-checkbox-input",
+      "tag": "input",
+      "sample_text": null,
+      "frequency": 22,
+      "sample_values": []
+    },
+    {
+      "hook_type": "data-test",
+      "name": "checkbox-input",
+      "tag": "span",
+      "sample_text": null,
+      "frequency": 22,
+      "sample_values": []
+    },
+    {
+      "hook_type": "air3-class",
+      "name": "air3-checkbox-fake-input",
+      "tag": "span",
+      "sample_text": null,
+      "frequency": 22,
+      "sample_values": []
+    },
+    {
+      "hook_type": "data-test",
+      "name": "checkbox-icon UpCIcon",
+      "tag": "div",
+      "sample_text": null,
+      "frequency": 22,
+      "sample_values": []
+    },
+    {
+      "hook_type": "air3-class",
+      "name": "air3-line-clamp-wrapper",
+      "tag": "div",
+      "sample_text": "Cloudflare Pages Developer: Move Website Assets Off WordPress & Host New Static Site (Fixed Price)",
+      "frequency": 20,
+      "sample_values": []
+    },
+    {
+      "hook_type": "air3-class",
+      "name": "air3-line-clamp",
+      "tag": "div",
+      "sample_text": "Cloudflare Pages Developer: Move Website Assets Off WordPress & Host New Static Site (Fixed Price)",
+      "frequency": 20,
+      "sample_values": []
+    },
+    {
+      "hook_type": "data-v",
+      "name": "data-v-bb796a46",
+      "tag": "div",
+      "sample_text": "Hire talent",
+      "frequency": 16,
+      "sample_values": []
+    },
+    {
+      "hook_type": "data-test",
+      "name": "pathfinder-category-tab",
+      "tag": "button",
+      "sample_text": "AI & Automation",
+      "frequency": 14,
+      "sample_values": [
+        "AI & Automation",
+        "Development & IT",
+        "Design & Creative",
+        "Marketing",
+        "Data & Analytics"
+      ]
+    },
+    {
+      "hook_type": "data-test",
+      "name": "pathfinder-category-panel",
+      "tag": "div",
+      "sample_text": "AI & AUTOMATION AI Video Creators & EditorsGenerate and edit AI-powered videoAI Integration Develope",
+      "frequency": 14,
+      "sample_values": [
+        "AI & AUTOMATION AI Video Creators & EditorsGenerate and edit AI-powered videoAI Integration Develope",
+        "DEVELOPMENT & IT Full-Stack DevelopersFront and back end developmentWordPress developersBuild and ma",
+        "DESIGN & CREATIVE Logo designersMarks and identities that stickGraphic designersVisual assets for an",
+        "MARKETING Social media managersGrow your social presenceGoogle Ads expertsDrive clicks and conversio",
+        "DATA & ANALYTICS Data AnalystsRaw data into clear insightsData ScientistsAdvanced modeling and predi"
+      ]
+    },
+    {
+      "hook_type": "data-v",
+      "name": "data-v-653fc8ba",
+      "tag": "div",
+      "sample_text": "TabsTalentJobs",
+      "frequency": 13,
+      "sample_values": []
+    },
+    {
+      "hook_type": "data-test",
+      "name": "filter-standard-option UpCCheckbox",
+      "tag": "label",
+      "sample_text": "Entry Level (9)",
+      "frequency": 13,
+      "sample_values": [
+        "Entry Level (9)",
+        "Intermediate (145)",
+        "Expert (72)",
+        "No hires (92)",
+        "1 to 9 hires (77)"
+      ]
+    },
+    {
+      "hook_type": "data-v",
+      "name": "data-v-a1b1a0bc",
+      "tag": "span",
+      "sample_text": null,
+      "frequency": 11,
+      "sample_values": []
+    },
+    {
+      "hook_type": "data-v",
+      "name": "data-v-51351b3a",
+      "tag": "div",
+      "sample_text": "CategorySelect CategoriesSelect CategoriesExperience levelExperience level filterEntry Level (9) Int",
+      "frequency": 11,
+      "sample_values": []
+    },
+    {
+      "hook_type": "data-v",
+      "name": "data-v-44c10a16",
+      "tag": "div",
+      "sample_text": "Search category: Jobs Talent Jobs",
+      "frequency": 10,
+      "sample_values": []
+    },
+    {
+      "hook_type": "data-test",
+      "name": "JobTile",
+      "tag": "article",
+      "sample_text": "Posted 2 hours agoCloudflare Pages Developer: Move Website Assets Off WordPress & Host New Static Si",
+      "frequency": 10,
+      "sample_values": [
+        "Posted 2 hours agoCloudflare Pages Developer: Move Website Assets Off WordPress & Host New Static Si",
+        "Posted 2 hours agoExisting Sites Need Revamp And New Site DevelopmentHourlyIntermediateEst. time:3 t",
+        "Posted yesterdayQuick Fix: Resolve Stripe Form & Text Page Layout/Script Conflict on WordPress SiteF",
+        "Posted yesterdaystructuring a new eccomerce site at HostingHourly: $20.00 - $40.00 IntermediateEst. ",
+        "Posted yesterdayLead generation Web designerFixed priceIntermediateEst. budget:$1,500.00seeking an e"
+      ]
+    },
+    {
+      "hook_type": "air3-class",
+      "name": "air3-card",
+      "tag": "article",
+      "sample_text": "Posted 2 hours agoCloudflare Pages Developer: Move Website Assets Off WordPress & Host New Static Si",
+      "frequency": 10,
+      "sample_values": []
+    },
+    {
+      "hook_type": "air3-class",
+      "name": "air3-card-list",
+      "tag": "article",
+      "sample_text": "Posted 2 hours agoCloudflare Pages Developer: Move Website Assets Off WordPress & Host New Static Si",
+      "frequency": 10,
+      "sample_values": []
+    },
+    {
+      "hook_type": "data-test",
+      "name": "JobTileHeader",
+      "tag": "div",
+      "sample_text": "Posted 2 hours agoCloudflare Pages Developer: Move Website Assets Off WordPress & Host New Static Si",
+      "frequency": 10,
+      "sample_values": [
+        "Posted 2 hours agoCloudflare Pages Developer: Move Website Assets Off WordPress & Host New Static Si",
+        "Posted 2 hours agoExisting Sites Need Revamp And New Site Development",
+        "Posted yesterdayQuick Fix: Resolve Stripe Form & Text Page Layout/Script Conflict on WordPress Site",
+        "Posted yesterdaystructuring a new eccomerce site at Hosting",
+        "Posted yesterdayLead generation Web designer"
+      ]
+    },
+    {
+      "hook_type": "data-test",
+      "name": "JobTile15in24Header",
+      "tag": "div",
+      "sample_text": "Posted 2 hours ago",
+      "frequency": 10,
+      "sample_values": [
+        "Posted 2 hours ago",
+        "Posted yesterday",
+        "Posted 2 days ago"
+      ]
+    },
+    {
+      "hook_type": "data-test",
+      "name": "job-pubilshed-date",
+      "tag": "small",
+      "sample_text": "Posted 2 hours ago",
+      "frequency": 10,
+      "sample_values": [
+        "Posted 2 hours ago",
+        "Posted yesterday",
+        "Posted 2 days ago"
+      ]
+    },
+    {
+      "hook_type": "data-test",
+      "name": "UpCLineClamp",
+      "tag": "div",
+      "sample_text": "Cloudflare Pages Developer: Move Website Assets Off WordPress & Host New Static Site (Fixed Price)",
+      "frequency": 10,
+      "sample_values": [
+        "Cloudflare Pages Developer: Move Website Assets Off WordPress & Host New Static Site (Fixed Price)",
+        "Existing Sites Need Revamp And New Site Development",
+        "Quick Fix: Resolve Stripe Form & Text Page Layout/Script Conflict on WordPress Site",
+        "structuring a new eccomerce site at Hosting",
+        "Lead generation Web designer"
+      ]
+    },
+    {
+      "hook_type": "data-test",
+      "name": "job-tile-title-link UpCLink",
+      "tag": "a",
+      "sample_text": "Cloudflare Pages Developer: Move Website Assets Off WordPress & Host New Static Site (Fixed Price)",
+      "frequency": 10,
+      "sample_values": [
+        "Cloudflare Pages Developer: Move Website Assets Off WordPress & Host New Static Site (Fixed Price)",
+        "Existing Sites Need Revamp And New Site Development",
+        "Quick Fix: Resolve Stripe Form & Text Page Layout/Script Conflict on WordPress Site",
+        "structuring a new eccomerce site at Hosting",
+        "Lead generation Web designer"
+      ]
+    },
+    {
+      "hook_type": "air3-class",
+      "name": "air3-link",
+      "tag": "a",
+      "sample_text": "Cloudflare Pages Developer: Move Website Assets Off WordPress & Host New Static Site (Fixed Price)",
+      "frequency": 10,
+      "sample_values": []
+    },
+    {
+      "hook_type": "air3-class",
+      "name": "air3-link-primary",
+      "tag": "a",
+      "sample_text": "Cloudflare Pages Developer: Move Website Assets Off WordPress & Host New Static Site (Fixed Price)",
+      "frequency": 10,
+      "sample_values": []
+    },
+    {
+      "hook_type": "data-test",
+      "name": "JobTileDetails",
+      "tag": "div",
+      "sample_text": "Fixed priceIntermediateEst. budget:$250.00Source Communications is an independently owned advertisin",
+      "frequency": 10,
+      "sample_values": [
+        "Fixed priceIntermediateEst. budget:$250.00Source Communications is an independently owned advertisin",
+        "HourlyIntermediateEst. time:3 to 6 months, Less than 30 hrs/weekWeb Designer Needed to Redesign Mult",
+        "Fixed priceIntermediateEst. budget:$40.00JOB DESCRIPTION: I need an experienced front-end WordPress ",
+        "Hourly: $20.00 - $40.00 IntermediateEst. time:Less than 1 month, Less than 30 hrs/weekI need someone",
+        "Fixed priceIntermediateEst. budget:$1,500.00seeking an experienced website professional to build a w"
+      ]
+    },
+    {
+      "hook_type": "data-test",
+      "name": "JobInfo",
+      "tag": "ul",
+      "sample_text": "Fixed priceIntermediateEst. budget:$250.00",
+      "frequency": 10,
+      "sample_values": [
+        "Fixed priceIntermediateEst. budget:$250.00",
+        "HourlyIntermediateEst. time:3 to 6 months, Less than 30 hrs/week",
+        "Fixed priceIntermediateEst. budget:$40.00",
+        "Hourly: $20.00 - $40.00 IntermediateEst. time:Less than 1 month, Less than 30 hrs/week",
+        "Fixed priceIntermediateEst. budget:$1,500.00"
+      ]
+    },
+    {
+      "hook_type": "data-test",
+      "name": "job-type-label",
+      "tag": "li",
+      "sample_text": "Fixed price",
+      "frequency": 10,
+      "sample_values": [
+        "Fixed price",
+        "Hourly",
+        "Hourly: $20.00 - $40.00",
+        "Hourly: $50.00 - $75.00"
+      ]
+    },
+    {
+      "hook_type": "data-test",
+      "name": "experience-level",
+      "tag": "li",
+      "sample_text": "Intermediate",
+      "frequency": 10,
+      "sample_values": [
+        "Intermediate",
+        "Expert"
+      ]
+    },
+    {
+      "hook_type": "data-test",
+      "name": "UpCLineClamp JobDescription",
+      "tag": "div",
+      "sample_text": "Source Communications is an independently owned advertising and sports marketing agency. We have a n",
+      "frequency": 10,
+      "sample_values": [
+        "Source Communications is an independently owned advertising and sports marketing agency. We have a n",
+        "Web Designer Needed to Redesign Multiple Websites \u2014 AI-Assisted Design Preferred Project Overview We",
+        "JOB DESCRIPTION: I need an experienced front-end WordPress developer to resolve a specific front-end",
+        "I need someone to place the elements on the website and make the e-commerce connections/buttons and ",
+        "seeking an experienced website professional to build a website that generates qualified homeowner ca"
+      ]
+    },
+    {
+      "hook_type": "data-test",
+      "name": "TokenClamp JobAttrs",
+      "tag": "div",
+      "sample_text": "Back-End DevelopmentCloudflareWeb DevelopmentHTMLWebsite",
+      "frequency": 10,
+      "sample_values": [
+        "Back-End DevelopmentCloudflareWeb DevelopmentHTMLWebsite",
+        "WordPressWeb DesignWeb DevelopmentPHPJavaScriptDashboardai coding assistants",
+        "WordPressJavaScriptFront-End Development FrameworkCSS",
+        "PayPalStripeWeb Development",
+        "Lead GenerationWeb DesignSocial Media MarketingCustomer Relationship ManagementLinkedIn"
+      ]
+    },
+    {
+      "hook_type": "air3-class",
+      "name": "air3-token-container",
+      "tag": "div",
+      "sample_text": "Back-End DevelopmentCloudflareWeb DevelopmentHTMLWebsite",
+      "frequency": 10,
+      "sample_values": []
+    },
+    {
+      "hook_type": "data-v",
+      "name": "data-v-137f6ea1",
+      "tag": "div",
+      "sample_text": "CategorySelect CategoriesSelect CategoriesExperience levelExperience level filterEntry Level (9) Int",
+      "frequency": 9,
+      "sample_values": []
+    },
+    {
+      "hook_type": "data-test",
+      "name": "filter-collapsible-toggler",
+      "tag": "button",
+      "sample_text": "Category",
+      "frequency": 9,
+      "sample_values": [
+        "Category",
+        "Experience level",
+        "Job type",
+        "Client history",
+        "Client locationThis will show you clients from a specific region or country. (If you also filter by "
+      ]
+    },
+    {
+      "hook_type": "data-test",
+      "name": "BaseTransition UpTransition UpTransitionHideShow UpCCollapse",
+      "tag": "div",
+      "sample_text": "Select CategoriesSelect Categories",
+      "frequency": 9,
+      "sample_values": [
+        "Select CategoriesSelect Categories",
+        "Experience level filterEntry Level (9) Intermediate (145) Expert (72)",
+        "Job type filterHourly (149) Custom USDMinimum hourly job rate per hour/hrCustom USDMaximum hourly jo",
+        "Client history filterNo hires (92) 1 to 9 hires (77) 10+ hires (57)",
+        "Select client locationsSelect client locations"
+      ]
+    },
+    {
+      "hook_type": "data-test",
+      "name": "pathfinder-why-item",
+      "tag": "li",
+      "sample_text": "Success stories Discover how teams work strategically to grow",
+      "frequency": 8,
+      "sample_values": [
+        "Success stories Discover how teams work strategically to grow",
+        "Reviews See what it's like to collaborate on Upwork",
+        "How to hire Learn the different ways you can get work done",
+        "How to find work Learn about how to grow on your terms",
+        "Upwork Updates Our latest products, features, and partners"
+      ]
+    },
+    {
+      "hook_type": "data-v",
+      "name": "data-v-25c0727e",
+      "tag": "div",
+      "sample_text": "SearchClear InputAdvanced searchTabsTalentJobs",
+      "frequency": 7,
+      "sample_values": []
+    },
+    {
+      "hook_type": "data-test",
+      "name": "UpCCheckboxGroup",
+      "tag": "div",
+      "sample_text": "Experience level filterEntry Level (9) Intermediate (145) Expert (72)",
+      "frequency": 7,
+      "sample_values": [
+        "Experience level filterEntry Level (9) Intermediate (145) Expert (72)",
+        "Job type filterHourly (149) Custom USDMinimum hourly job rate per hour/hrCustom USDMaximum hourly jo",
+        "Less than $100 (7) $100 to $500 (28) $500 - $1K (15) $1K - $5K (21) $5K+ (6)",
+        "Client history filterNo hires (92) 1 to 9 hires (77) 10+ hires (57)",
+        "Project length filterLess than one month (127) 1 to 3 months (134) 3 to 6 months (89) More than 6 mo"
+      ]
+    },
+    {
+      "hook_type": "air3-class",
+      "name": "air3-checkbox-group",
+      "tag": "div",
+      "sample_text": "Experience level filterEntry Level (9) Intermediate (145) Expert (72)",
+      "frequency": 7,
+      "sample_values": []
+    },
+    {
+      "hook_type": "data-test",
+      "name": "pathfinder-outcomes-item",
+      "tag": "li",
+      "sample_text": "Build my website Web design, development and more",
+      "frequency": 6,
+      "sample_values": [
+        "Build my website Web design, development and more",
+        "Design my brand Logo, brand identity and more",
+        "Scale my paid ad campaigns Growth marketing, media strategy and more",
+        "Automate my workflows Planning, integration, AI agents and more",
+        "Handle customer support with AI Chatbots, AI agents, systems and more"
+      ]
+    },
+    {
+      "hook_type": "data-test",
+      "name": "popper BaseTransition UpTransition UpTransitionIntro",
+      "tag": "span",
+      "sample_text": "This will show you clients from a specific region or country. (If you also filter by time zone, you ",
+      "frequency": 6,
+      "sample_values": [
+        "This will show you clients from a specific region or country. (If you also filter by time zone, you ",
+        "This will show you clients from a specific time zone. (If you also filter by location, you will see ",
+        "First page",
+        "Previous page",
+        "Next page"
+      ]
+    },
+    {
+      "hook_type": "air3-class",
+      "name": "air3-popper",
+      "tag": "span",
+      "sample_text": "This will show you clients from a specific region or country. (If you also filter by time zone, you ",
+      "frequency": 6,
+      "sample_values": []
+    },
+    {
+      "hook_type": "air3-class",
+      "name": "air3-popper-container",
+      "tag": "div",
+      "sample_text": "This will show you clients from a specific region or country. (If you also filter by time zone, you ",
+      "frequency": 6,
+      "sample_values": []
+    },
+    {
+      "hook_type": "air3-class",
+      "name": "air3-popper-wrapper",
+      "tag": "div",
+      "sample_text": "This will show you clients from a specific region or country. (If you also filter by time zone, you ",
+      "frequency": 6,
+      "sample_values": []
+    },
+    {
+      "hook_type": "air3-class",
+      "name": "air3-popper-inner",
+      "tag": "div",
+      "sample_text": "This will show you clients from a specific region or country. (If you also filter by time zone, you ",
+      "frequency": 6,
+      "sample_values": []
+    },
+    {
+      "hook_type": "air3-class",
+      "name": "air3-popper-content",
+      "tag": "div",
+      "sample_text": "This will show you clients from a specific region or country. (If you also filter by time zone, you ",
+      "frequency": 6,
+      "sample_values": []
+    },
+    {
+      "hook_type": "data-test",
+      "name": "popper-arrow",
+      "tag": "div",
+      "sample_text": null,
+      "frequency": 6,
+      "sample_values": []
+    },
+    {
+      "hook_type": "air3-class",
+      "name": "air3-popper-arrow",
+      "tag": "div",
+      "sample_text": null,
+      "frequency": 6,
+      "sample_values": []
+    },
+    {
+      "hook_type": "data-test",
+      "name": "is-fixed-price",
+      "tag": "li",
+      "sample_text": "Est. budget:$250.00",
+      "frequency": 6,
+      "sample_values": [
+        "Est. budget:$250.00",
+        "Est. budget:$40.00",
+        "Est. budget:$1,500.00",
+        "Est. budget:$200.00"
+      ]
+    },
+    {
+      "hook_type": "data-cy",
+      "name": "menu",
+      "tag": "li",
+      "sample_text": "Hire talent CATEGORIES AI & Automation Development & IT Design & Creative Marketing Data & Analytics",
+      "frequency": 5,
+      "sample_values": [
+        "Hire talent CATEGORIES AI & Automation Development & IT Design & Creative Marketing Data & Analytics",
+        "Get outcomes Drive larger-scale work Build specialized teams for complex projects OUTCOMES Build my ",
+        "Find work CATEGORIES AI & Automation Development & IT Marketing Design & Creative Video & Audio Writ",
+        "Why Upwork Learn about Upwork Get to know the platform built for the future of work RESOURCESSuccess",
+        "Log in Log in"
+      ]
+    },
+    {
+      "hook_type": "data-cy",
+      "name": "menuitem-jobs",
+      "tag": "a",
+      "sample_text": "wordpress developer",
+      "frequency": 5,
+      "sample_values": [
+        "wordpress developer",
+        "wordpress elementor",
+        "wordpress website design",
+        "wordpress seo",
+        "wordpress speed optimization"
+      ]
+    },
+    {
+      "hook_type": "data-cy",
+      "name": "nav-secondary-item",
+      "tag": "li",
+      "sample_text": "Development & IT",
+      "frequency": 5,
+      "sample_values": [
+        "Development & IT",
+        "AI Services",
+        "Design & Creative",
+        "Sales & Marketing",
+        "Admin & Customer Support"
+      ]
+    },
+    {
+      "hook_type": "data-cy",
+      "name": "nav-secondary-item-link",
+      "tag": "a",
+      "sample_text": "Development & IT",
+      "frequency": 5,
+      "sample_values": [
+        "Development & IT",
+        "AI Services",
+        "Design & Creative",
+        "Sales & Marketing",
+        "Admin & Customer Support"
+      ]
+    },
+    {
+      "hook_type": "data-test",
+      "name": "UpCInput",
+      "tag": "div",
+      "sample_text": "Clear Input",
+      "frequency": 5,
+      "sample_values": [
+        "Clear Input"
+      ]
+    },
+    {
+      "hook_type": "air3-class",
+      "name": "air3-input-group",
+      "tag": "div",
+      "sample_text": "Clear Input",
+      "frequency": 5,
+      "sample_values": []
+    },
+    {
+      "hook_type": "air3-class",
+      "name": "air3-input-prepend",
+      "tag": "div",
+      "sample_text": null,
+      "frequency": 5,
+      "sample_values": []
+    },
+    {
+      "hook_type": "air3-class",
+      "name": "air3-input",
+      "tag": "input",
+      "sample_text": null,
+      "frequency": 5,
+      "sample_values": []
+    },
+    {
+      "hook_type": "air3-class",
+      "name": "air3-input-append",
+      "tag": "div",
+      "sample_text": "Clear Input",
+      "frequency": 5,
+      "sample_values": []
+    },
+    {
+      "hook_type": "air3-class",
+      "name": "air3-btn",
+      "tag": "button",
+      "sample_text": "Advanced search",
+      "frequency": 5,
+      "sample_values": []
+    },
+    {
+      "hook_type": "air3-class",
+      "name": "air3-dropdown",
+      "tag": "div",
+      "sample_text": "Select Categories",
+      "frequency": 5,
+      "sample_values": []
+    },
+    {
+      "hook_type": "data-test",
+      "name": "dropdown-toggle UpCDropdownToggle",
+      "tag": "div",
+      "sample_text": "Select Categories",
+      "frequency": 5,
+      "sample_values": [
+        "Select Categories",
+        "Select client locations",
+        "Select client time zones",
+        "Sort by: Newest",
+        "10"
+      ]
+    },
+    {
+      "hook_type": "air3-class",
+      "name": "air3-dropdown-toggle",
+      "tag": "div",
+      "sample_text": "Select Categories",
+      "frequency": 5,
+      "sample_values": []
+    },
+    {
+      "hook_type": "air3-class",
+      "name": "air3-dropdown-toggle-title",
+      "tag": "div",
+      "sample_text": "Select Categories",
+      "frequency": 5,
+      "sample_values": []
+    },
+    {
+      "hook_type": "air3-class",
+      "name": "air3-dropdown-toggle-label",
+      "tag": "span",
+      "sample_text": "Select Categories",
+      "frequency": 5,
+      "sample_values": []
+    },
+    {
+      "hook_type": "air3-class",
+      "name": "air3-dropdown-icon",
+      "tag": "div",
+      "sample_text": null,
+      "frequency": 5,
+      "sample_values": []
+    },
+    {
+      "hook_type": "data-test",
+      "name": "filter-fixed-price-option UpCCheckbox",
+      "tag": "label",
+      "sample_text": "Less than $100 (7)",
+      "frequency": 5,
+      "sample_values": [
+        "Less than $100 (7)",
+        "$100 to $500 (28)",
+        "$500 - $1K (15)",
+        "$1K - $5K (21)",
+        "$5K+ (6)"
+      ]
+    },
+    {
+      "hook_type": "data-cy",
+      "name": "menu-trigger",
+      "tag": "button",
+      "sample_text": "Hire talent",
+      "frequency": 4,
+      "sample_values": [
+        "Hire talent",
+        "Get outcomes",
+        "Find work",
+        "Why Upwork"
+      ]
+    },
+    {
+      "hook_type": "data-cy",
+      "name": "dropdown-menu-container",
+      "tag": "ul",
+      "sample_text": "CATEGORIES AI & Automation Development & IT Design & Creative Marketing Data & Analytics Admin & sup",
+      "frequency": 4,
+      "sample_values": [
+        "CATEGORIES AI & Automation Development & IT Design & Creative Marketing Data & Analytics Admin & sup",
+        "Drive larger-scale work Build specialized teams for complex projects OUTCOMES Build my website Web d",
+        "CATEGORIES AI & Automation Development & IT Marketing Design & Creative Video & Audio Writing & cont",
+        "Learn about Upwork Get to know the platform built for the future of work RESOURCESSuccess stories Di"
+      ]
+    },
+    {
+      "hook_type": "data-v",
+      "name": "data-v-74f4e4ae",
+      "tag": "li",
+      "sample_text": "Enterprise",
+      "frequency": 4,
+      "sample_values": []
+    },
+    {
+      "hook_type": "data-v",
+      "name": "data-v-410b6f7d",
+      "tag": "div",
+      "sample_text": "SearchClear Input",
+      "frequency": 4,
+      "sample_values": []
+    },
+    {
+      "hook_type": "air3-class",
+      "name": "air3-input-sm",
+      "tag": "input",
+      "sample_text": null,
+      "frequency": 4,
+      "sample_values": []
+    },
+    {
+      "hook_type": "data-test",
+      "name": "duration-label",
+      "tag": "li",
+      "sample_text": "Est. time:3 to 6 months, Less than 30 hrs/week",
+      "frequency": 4,
+      "sample_values": [
+        "Est. time:3 to 6 months, Less than 30 hrs/week",
+        "Est. time:Less than 1 month, Less than 30 hrs/week",
+        "Est. time:1 to 3 months, Less than 30 hrs/week"
+      ]
+    },
+    {
+      "hook_type": "data-test",
+      "name": "UpCTooltip",
+      "tag": "span",
+      "sample_text": "First page",
+      "frequency": 4,
+      "sample_values": [
+        "First page",
+        "Previous page",
+        "Next page",
+        "Last page"
+      ]
+    },
+    {
+      "hook_type": "air3-class",
+      "name": "air3-btn-circle",
+      "tag": "a",
+      "sample_text": null,
+      "frequency": 4,
+      "sample_values": []
+    },
+    {
+      "hook_type": "air3-class",
+      "name": "air3-pagination-btn-control",
+      "tag": "a",
+      "sample_text": null,
+      "frequency": 4,
+      "sample_values": []
+    },
+    {
+      "hook_type": "air3-class",
+      "name": "air3-tooltip",
+      "tag": "span",
+      "sample_text": "First page",
+      "frequency": 4,
+      "sample_values": []
+    },
+    {
+      "hook_type": "data-test",
+      "name": "pagination-nr",
+      "tag": "li",
+      "sample_text": "Current page 1 of 231",
+      "frequency": 4,
+      "sample_values": [
+        "Current page 1 of 231",
+        "go to page2",
+        "go to page3",
+        "go to page4"
+      ]
+    },
+    {
+      "hook_type": "air3-class",
+      "name": "air3-pagination-nr",
+      "tag": "li",
+      "sample_text": "Current page 1 of 231",
+      "frequency": 4,
+      "sample_values": []
+    },
+    {
+      "hook_type": "data-test",
+      "name": "pagination-item",
+      "tag": "a",
+      "sample_text": "Current page 1 of 231",
+      "frequency": 4,
+      "sample_values": [
+        "Current page 1 of 231",
+        "go to page2",
+        "go to page3",
+        "go to page4"
+      ]
+    },
+    {
+      "hook_type": "air3-class",
+      "name": "air3-pagination-nr-btn",
+      "tag": "a",
+      "sample_text": "Current page 1 of 231",
+      "frequency": 4,
+      "sample_values": []
+    },
+    {
+      "hook_type": "data-cy",
+      "name": "footer-toggle-icon",
+      "tag": "span",
+      "sample_text": null,
+      "frequency": 4,
+      "sample_values": []
+    },
+    {
+      "hook_type": "data-v",
+      "name": "data-v-68d966d4",
+      "tag": "a",
+      "sample_text": "Your Privacy Choices California Consumer Privacy Act (CCPA) Opt-Out",
+      "frequency": 3,
+      "sample_values": []
+    },
+    {
+      "hook_type": "data-test",
+      "name": "pathfinder-why-section",
+      "tag": "section",
+      "sample_text": "RESOURCESSuccess stories Discover how teams work strategically to grow Reviews See what it's like to",
+      "frequency": 2,
+      "sample_values": [
+        "RESOURCESSuccess stories Discover how teams work strategically to grow Reviews See what it's like to",
+        "WHAT'S NEWUpwork Updates Our latest products, features, and partners Research Institute Insights and"
+      ]
+    },
+    {
+      "hook_type": "data-v",
+      "name": "data-v-6771284b",
+      "tag": "div",
+      "sample_text": "Toggle SearchSearch category: Jobs Talent Jobs wordpress developerwordpress elementorwordpress websi",
+      "frequency": 2,
+      "sample_values": []
+    },
+    {
+      "hook_type": "air3-class",
+      "name": "air3-tab-list-item",
+      "tag": "li",
+      "sample_text": "Talent",
+      "frequency": 2,
+      "sample_values": []
+    },
+    {
+      "hook_type": "data-test",
+      "name": "RouterLink NuxtLink",
+      "tag": "a",
+      "sample_text": "Talent",
+      "frequency": 2,
+      "sample_values": [
+        "Talent",
+        "Jobs"
+      ]
+    },
+    {
+      "hook_type": "air3-class",
+      "name": "air3-tab-btn",
+      "tag": "a",
+      "sample_text": "Talent",
+      "frequency": 2,
+      "sample_values": []
+    },
+    {
+      "hook_type": "air3-class",
+      "name": "air3-tab-btn-text",
+      "tag": "span",
+      "sample_text": "Talent",
+      "frequency": 2,
+      "sample_values": []
+    },
+    {
+      "hook_type": "air3-class",
+      "name": "air3-tab-btn-text-wrapper",
+      "tag": "span",
+      "sample_text": "Talent",
+      "frequency": 2,
+      "sample_values": []
+    },
+    {
+      "hook_type": "data-test",
+      "name": "filter-range-min-value",
+      "tag": "input",
+      "sample_text": null,
+      "frequency": 2,
+      "sample_values": []
+    },
+    {
+      "hook_type": "data-test",
+      "name": "filter-range-max-value",
+      "tag": "input",
+      "sample_text": null,
+      "frequency": 2,
+      "sample_values": []
+    },
+    {
+      "hook_type": "air3-class",
+      "name": "air3-popper-trigger",
+      "tag": "div",
+      "sample_text": null,
+      "frequency": 2,
+      "sample_values": []
+    },
+    {
+      "hook_type": "data-test",
+      "name": "UpCPopover",
+      "tag": "span",
+      "sample_text": "This will show you clients from a specific region or country. (If you also filter by time zone, you ",
+      "frequency": 2,
+      "sample_values": [
+        "This will show you clients from a specific region or country. (If you also filter by time zone, you ",
+        "This will show you clients from a specific time zone. (If you also filter by location, you will see "
+      ]
+    },
+    {
+      "hook_type": "air3-class",
+      "name": "air3-popover",
+      "tag": "span",
+      "sample_text": "This will show you clients from a specific region or country. (If you also filter by time zone, you ",
+      "frequency": 2,
+      "sample_values": []
+    },
+    {
+      "hook_type": "data-v",
+      "name": "data-v-57272eda",
+      "tag": "div",
+      "sample_text": "PaginationFirst pagePrevious page1 of 23Current page 1 of 231go to page2go to page3go to page4 ... N",
+      "frequency": 2,
+      "sample_values": []
+    },
+    {
+      "hook_type": "air3-class",
+      "name": "air3-pagination-item-boundary",
+      "tag": "li",
+      "sample_text": "First page",
+      "frequency": 2,
+      "sample_values": []
+    },
+    {
+      "hook_type": "air3-class",
+      "name": "air3-pagination-item",
+      "tag": "li",
+      "sample_text": "Previous page",
+      "frequency": 2,
+      "sample_values": []
+    },
+    {
+      "hook_type": "air3-class",
+      "name": "air3-pagination-item-short",
+      "tag": "li",
+      "sample_text": null,
+      "frequency": 2,
+      "sample_values": []
+    },
+    {
+      "hook_type": "data-test",
+      "name": "visitor-layout nuxt-root NuxtLayout LayoutLoader NuxtLayoutProvider NuxtLayoutVisitor",
+      "tag": "div",
+      "sample_text": "Skip to content Upwork home Sign upHire talentHire talent CATEGORIES AI & Automation Development & I",
+      "frequency": 1,
+      "sample_values": [
+        "Skip to content Upwork home Sign upHire talentHire talent CATEGORIES AI & Automation Development & I"
+      ]
+    },
+    {
+      "hook_type": "data-test",
+      "name": "MicroAppLbComponent VisitorV2NavAppLoader",
+      "tag": "div",
+      "sample_text": "Skip to content Upwork home Sign upHire talentHire talent CATEGORIES AI & Automation Development & I",
+      "frequency": 1,
+      "sample_values": [
+        "Skip to content Upwork home Sign upHire talentHire talent CATEGORIES AI & Automation Development & I"
+      ]
+    },
+    {
+      "hook_type": "data-v",
+      "name": "data-v-1d66936d",
+      "tag": "div",
+      "sample_text": "Skip to content Upwork home Sign upHire talentHire talent CATEGORIES AI & Automation Development & I",
+      "frequency": 1,
+      "sample_values": []
+    },
+    {
+      "hook_type": "data-qa",
+      "name": "top-nav-visitor-ia",
+      "tag": "div",
+      "sample_text": "Skip to content Upwork home Sign upHire talentHire talent CATEGORIES AI & Automation Development & I",
+      "frequency": 1,
+      "sample_values": [
+        "Skip to content Upwork home Sign upHire talentHire talent CATEGORIES AI & Automation Development & I"
+      ]
+    },
+    {
+      "hook_type": "data-cy",
+      "name": "nav",
+      "tag": "header",
+      "sample_text": "Skip to content Upwork home Sign upHire talentHire talent CATEGORIES AI & Automation Development & I",
+      "frequency": 1,
+      "sample_values": [
+        "Skip to content Upwork home Sign upHire talentHire talent CATEGORIES AI & Automation Development & I"
+      ]
+    },
+    {
+      "hook_type": "data-cy",
+      "name": "skip-nav",
+      "tag": "button",
+      "sample_text": "Skip to content",
+      "frequency": 1,
+      "sample_values": [
+        "Skip to content"
+      ]
+    },
+    {
+      "hook_type": "data-cy",
+      "name": "header",
+      "tag": "div",
+      "sample_text": "Upwork home Sign up",
+      "frequency": 1,
+      "sample_values": [
+        "Upwork home Sign up"
+      ]
+    },
+    {
+      "hook_type": "data-cy",
+      "name": "hamburger-trigger",
+      "tag": "button",
+      "sample_text": null,
+      "frequency": 1,
+      "sample_values": []
+    },
+    {
+      "hook_type": "data-cy",
+      "name": "brand",
+      "tag": "a",
+      "sample_text": "Upwork home",
+      "frequency": 1,
+      "sample_values": [
+        "Upwork home"
+      ]
+    },
+    {
+      "hook_type": "data-cy",
+      "name": "signup",
+      "tag": "div",
+      "sample_text": "Sign up",
+      "frequency": 1,
+      "sample_values": [
+        "Sign up"
+      ]
+    },
+    {
+      "hook_type": "data-cy",
+      "name": "collapse",
+      "tag": "div",
+      "sample_text": "Hire talentHire talent CATEGORIES AI & Automation Development & IT Design & Creative Marketing Data ",
+      "frequency": 1,
+      "sample_values": [
+        "Hire talentHire talent CATEGORIES AI & Automation Development & IT Design & Creative Marketing Data "
+      ]
+    },
+    {
+      "hook_type": "data-cy",
+      "name": "nav-right",
+      "tag": "ul",
+      "sample_text": "Hire talentHire talent CATEGORIES AI & Automation Development & IT Design & Creative Marketing Data ",
+      "frequency": 1,
+      "sample_values": [
+        "Hire talentHire talent CATEGORIES AI & Automation Development & IT Design & Creative Marketing Data "
+      ]
+    },
+    {
+      "hook_type": "data-v",
+      "name": "data-v-57b9c4f2",
+      "tag": "div",
+      "sample_text": "Get outcomes",
+      "frequency": 1,
+      "sample_values": []
+    },
+    {
+      "hook_type": "data-test",
+      "name": "pathfinder-outcomes-intro",
+      "tag": "section",
+      "sample_text": "Drive larger-scale work Build specialized teams for complex projects",
+      "frequency": 1,
+      "sample_values": [
+        "Drive larger-scale work Build specialized teams for complex projects"
+      ]
+    },
+    {
+      "hook_type": "data-test",
+      "name": "pathfinder-outcomes-section",
+      "tag": "section",
+      "sample_text": "OUTCOMES Build my website Web design, development and more Design my brand Logo, brand identity and ",
+      "frequency": 1,
+      "sample_values": [
+        "OUTCOMES Build my website Web design, development and more Design my brand Logo, brand identity and "
+      ]
+    },
+    {
+      "hook_type": "data-test",
+      "name": "pathfinder-outcomes-grid",
+      "tag": "ul",
+      "sample_text": "Build my website Web design, development and more Design my brand Logo, brand identity and more Scal",
+      "frequency": 1,
+      "sample_values": [
+        "Build my website Web design, development and more Design my brand Logo, brand identity and more Scal"
+      ]
+    },
+    {
+      "hook_type": "data-v",
+      "name": "data-v-1262df4e",
+      "tag": "div",
+      "sample_text": "Why Upwork",
+      "frequency": 1,
+      "sample_values": []
+    },
+    {
+      "hook_type": "data-test",
+      "name": "pathfinder-why-intro",
+      "tag": "section",
+      "sample_text": "Learn about Upwork Get to know the platform built for the future of work",
+      "frequency": 1,
+      "sample_values": [
+        "Learn about Upwork Get to know the platform built for the future of work"
+      ]
+    },
+    {
+      "hook_type": "data-cy",
+      "name": "nav-left",
+      "tag": "div",
+      "sample_text": "Toggle SearchSearch category: Jobs Talent Jobs wordpress developerwordpress elementorwordpress websi",
+      "frequency": 1,
+      "sample_values": [
+        "Toggle SearchSearch category: Jobs Talent Jobs wordpress developerwordpress elementorwordpress websi"
+      ]
+    },
+    {
+      "hook_type": "data-cy",
+      "name": "search-toggle-tablet",
+      "tag": "button",
+      "sample_text": null,
+      "frequency": 1,
+      "sample_values": []
+    },
+    {
+      "hook_type": "data-cy",
+      "name": "search-autosuggest",
+      "tag": "div",
+      "sample_text": "Toggle SearchSearch category: Jobs Talent Jobs wordpress developerwordpress elementorwordpress websi",
+      "frequency": 1,
+      "sample_values": [
+        "Toggle SearchSearch category: Jobs Talent Jobs wordpress developerwordpress elementorwordpress websi"
+      ]
+    },
+    {
+      "hook_type": "data-cy",
+      "name": "search-mobile-toggle",
+      "tag": "button",
+      "sample_text": "Toggle Search",
+      "frequency": 1,
+      "sample_values": [
+        "Toggle Search"
+      ]
+    },
+    {
+      "hook_type": "data-cy",
+      "name": "search-input",
+      "tag": "input",
+      "sample_text": null,
+      "frequency": 1,
+      "sample_values": []
+    },
+    {
+      "hook_type": "data-cy",
+      "name": "search-clear-button",
+      "tag": "button",
+      "sample_text": null,
+      "frequency": 1,
+      "sample_values": []
+    },
+    {
+      "hook_type": "data-cy",
+      "name": "search-switch-btn",
+      "tag": "button",
+      "sample_text": "Search category: Jobs",
+      "frequency": 1,
+      "sample_values": [
+        "Search category: Jobs"
+      ]
+    },
+    {
+      "hook_type": "data-cy",
+      "name": "search-options",
+      "tag": "ul",
+      "sample_text": "Talent Jobs",
+      "frequency": 1,
+      "sample_values": [
+        "Talent Jobs"
+      ]
+    },
+    {
+      "hook_type": "data-cy",
+      "name": "menuitem-freelancers-button",
+      "tag": "button",
+      "sample_text": "Talent",
+      "frequency": 1,
+      "sample_values": [
+        "Talent"
+      ]
+    },
+    {
+      "hook_type": "data-cy",
+      "name": "menuitem-jobs-button",
+      "tag": "button",
+      "sample_text": "Jobs",
+      "frequency": 1,
+      "sample_values": [
+        "Jobs"
+      ]
+    },
+    {
+      "hook_type": "data-cy",
+      "name": "search-input-dropdown",
+      "tag": "ul",
+      "sample_text": "wordpress developerwordpress elementorwordpress website designwordpress seowordpress speed optimizat",
+      "frequency": 1,
+      "sample_values": [
+        "wordpress developerwordpress elementorwordpress website designwordpress seowordpress speed optimizat"
+      ]
+    },
+    {
+      "hook_type": "data-cy",
+      "name": "nav-secondary-menu",
+      "tag": "div",
+      "sample_text": "Secondary Development & ITAI ServicesDesign & CreativeSales & MarketingAdmin & Customer Support More",
+      "frequency": 1,
+      "sample_values": [
+        "Secondary Development & ITAI ServicesDesign & CreativeSales & MarketingAdmin & Customer Support More"
+      ]
+    },
+    {
+      "hook_type": "data-cy",
+      "name": "subnav-more-element",
+      "tag": "li",
+      "sample_text": "More Writing & TranslationFinance & AccountingHR & TrainingLegalEngineering & ArchitectureSee all sp",
+      "frequency": 1,
+      "sample_values": [
+        "More Writing & TranslationFinance & AccountingHR & TrainingLegalEngineering & ArchitectureSee all sp"
+      ]
+    },
+    {
+      "hook_type": "data-cy",
+      "name": "subnav-more",
+      "tag": "button",
+      "sample_text": "More",
+      "frequency": 1,
+      "sample_values": [
+        "More"
+      ]
+    },
+    {
+      "hook_type": "data-test",
+      "name": "RouterView NuxtPage RouteProvider UniversalSearch",
+      "tag": "div",
+      "sample_text": "SearchClear InputAdvanced searchTabsTalentJobsCategorySelect CategoriesSelect CategoriesExperience l",
+      "frequency": 1,
+      "sample_values": [
+        "SearchClear InputAdvanced searchTabsTalentJobsCategorySelect CategoriesSelect CategoriesExperience l"
+      ]
+    },
+    {
+      "hook_type": "data-test",
+      "name": "KeepAlive RouterView NuxtPage RouterView NuxtPage JobsTab JobsTab RouteProvider JobsTabIndex",
+      "tag": "div",
+      "sample_text": "SearchClear InputAdvanced searchTabsTalentJobsCategorySelect CategoriesSelect CategoriesExperience l",
+      "frequency": 1,
+      "sample_values": [
+        "SearchClear InputAdvanced searchTabsTalentJobsCategorySelect CategoriesSelect CategoriesExperience l"
+      ]
+    },
+    {
+      "hook_type": "data-test",
+      "name": "Header",
+      "tag": "div",
+      "sample_text": "SearchClear InputAdvanced searchTabsTalentJobs",
+      "frequency": 1,
+      "sample_values": [
+        "SearchClear InputAdvanced searchTabsTalentJobs"
+      ]
+    },
+    {
+      "hook_type": "data-test",
+      "name": "search-container",
+      "tag": "div",
+      "sample_text": "SearchClear InputAdvanced search",
+      "frequency": 1,
+      "sample_values": [
+        "SearchClear InputAdvanced search"
+      ]
+    },
+    {
+      "hook_type": "data-test",
+      "name": "SearchBar SearchForm",
+      "tag": "div",
+      "sample_text": "SearchClear Input",
+      "frequency": 1,
+      "sample_values": [
+        "SearchClear Input"
+      ]
+    },
+    {
+      "hook_type": "data-test",
+      "name": "UpCTypeahead",
+      "tag": "div",
+      "sample_text": "Clear Input",
+      "frequency": 1,
+      "sample_values": [
+        "Clear Input"
+      ]
+    },
+    {
+      "hook_type": "data-test",
+      "name": "UpCTypeaheadInputFake",
+      "tag": "div",
+      "sample_text": "Clear Input",
+      "frequency": 1,
+      "sample_values": [
+        "Clear Input"
+      ]
+    },
+    {
+      "hook_type": "air3-class",
+      "name": "air3-typeahead-fake",
+      "tag": "div",
+      "sample_text": "Clear Input",
+      "frequency": 1,
+      "sample_values": []
+    },
+    {
+      "hook_type": "air3-class",
+      "name": "air3-input-group-clear",
+      "tag": "div",
+      "sample_text": "Clear Input",
+      "frequency": 1,
+      "sample_values": []
+    },
+    {
+      "hook_type": "air3-class",
+      "name": "air3-typeahead-input-fake",
+      "tag": "input",
+      "sample_text": null,
+      "frequency": 1,
+      "sample_values": []
+    },
+    {
+      "hook_type": "data-qa",
+      "name": "clear-button",
+      "tag": "button",
+      "sample_text": "Clear Input",
+      "frequency": 1,
+      "sample_values": [
+        "Clear Input"
+      ]
+    },
+    {
+      "hook_type": "air3-class",
+      "name": "air3-btn-clear",
+      "tag": "button",
+      "sample_text": "Clear Input",
+      "frequency": 1,
+      "sample_values": []
+    },
+    {
+      "hook_type": "data-test",
+      "name": "advance-search-modal-desktop AdvancedSearchButtonLink",
+      "tag": "div",
+      "sample_text": "Advanced search",
+      "frequency": 1,
+      "sample_values": [
+        "Advanced search"
+      ]
+    },
+    {
+      "hook_type": "data-test",
+      "name": "button UpCButton",
+      "tag": "button",
+      "sample_text": "Advanced search",
+      "frequency": 1,
+      "sample_values": [
+        "Advanced search"
+      ]
+    },
+    {
+      "hook_type": "air3-class",
+      "name": "air3-btn-link",
+      "tag": "button",
+      "sample_text": "Advanced search",
+      "frequency": 1,
+      "sample_values": []
+    },
+    {
+      "hook_type": "data-test",
+      "name": "Tabs",
+      "tag": "div",
+      "sample_text": "TabsTalentJobs",
+      "frequency": 1,
+      "sample_values": [
+        "TabsTalentJobs"
+      ]
+    },
+    {
+      "hook_type": "air3-class",
+      "name": "air3-tabs-header",
+      "tag": "div",
+      "sample_text": "TabsTalentJobs",
+      "frequency": 1,
+      "sample_values": []
+    },
+    {
+      "hook_type": "air3-class",
+      "name": "air3-tabs-sticky",
+      "tag": "div",
+      "sample_text": "TabsTalentJobs",
+      "frequency": 1,
+      "sample_values": []
+    },
+    {
+      "hook_type": "air3-class",
+      "name": "air3-tabs-horizontal",
+      "tag": "div",
+      "sample_text": "TabsTalentJobs",
+      "frequency": 1,
+      "sample_values": []
+    },
+    {
+      "hook_type": "air3-class",
+      "name": "air3-tab-list",
+      "tag": "ul",
+      "sample_text": "TalentJobs",
+      "frequency": 1,
+      "sample_values": []
+    },
+    {
+      "hook_type": "data-test",
+      "name": "tab-talent",
+      "tag": "li",
+      "sample_text": "Talent",
+      "frequency": 1,
+      "sample_values": [
+        "Talent"
+      ]
+    },
+    {
+      "hook_type": "data-test",
+      "name": "tab-jobs",
+      "tag": "li",
+      "sample_text": "Jobs",
+      "frequency": 1,
+      "sample_values": [
+        "Jobs"
+      ]
+    },
+    {
+      "hook_type": "data-test",
+      "name": "JobsPage",
+      "tag": "div",
+      "sample_text": "CategorySelect CategoriesSelect CategoriesExperience levelExperience level filterEntry Level (9) Int",
+      "frequency": 1,
+      "sample_values": [
+        "CategorySelect CategoriesSelect CategoriesExperience levelExperience level filterEntry Level (9) Int"
+      ]
+    },
+    {
+      "hook_type": "air3-class",
+      "name": "air3-grid-container",
+      "tag": "div",
+      "sample_text": "CategorySelect CategoriesSelect CategoriesExperience levelExperience level filterEntry Level (9) Int",
+      "frequency": 1,
+      "sample_values": []
+    },
+    {
+      "hook_type": "data-test",
+      "name": "FiltersList",
+      "tag": "div",
+      "sample_text": "CategorySelect CategoriesSelect CategoriesExperience levelExperience level filterEntry Level (9) Int",
+      "frequency": 1,
+      "sample_values": [
+        "CategorySelect CategoriesSelect CategoriesExperience levelExperience level filterEntry Level (9) Int"
+      ]
+    },
+    {
+      "hook_type": "data-test",
+      "name": "filter-sidebar-component_categories FilterCollapsible FilterCategories",
+      "tag": "div",
+      "sample_text": "CategorySelect CategoriesSelect Categories",
+      "frequency": 1,
+      "sample_values": [
+        "CategorySelect CategoriesSelect Categories"
+      ]
+    },
+    {
+      "hook_type": "data-test",
+      "name": "filter-category UpCDropdown",
+      "tag": "div",
+      "sample_text": "Select Categories",
+      "frequency": 1,
+      "sample_values": [
+        "Select Categories"
+      ]
+    },
+    {
+      "hook_type": "data-test",
+      "name": "filter-sidebar-component_contractorTier FilterCollapsible FilterStandard",
+      "tag": "div",
+      "sample_text": "Experience levelExperience level filterEntry Level (9) Intermediate (145) Expert (72)",
+      "frequency": 1,
+      "sample_values": [
+        "Experience levelExperience level filterEntry Level (9) Intermediate (145) Expert (72)"
+      ]
+    },
+    {
+      "hook_type": "data-test",
+      "name": "filter-sidebar-component_jobType FilterCollapsible FilterJobType",
+      "tag": "div",
+      "sample_text": "Job typeJob type filterHourly (149) Custom USDMinimum hourly job rate per hour/hrCustom USDMaximum h",
+      "frequency": 1,
+      "sample_values": [
+        "Job typeJob type filterHourly (149) Custom USDMinimum hourly job rate per hour/hrCustom USDMaximum h"
+      ]
+    },
+    {
+      "hook_type": "data-test",
+      "name": "filter-hourly-job-type UpCCheckbox",
+      "tag": "label",
+      "sample_text": "Hourly (149)",
+      "frequency": 1,
+      "sample_values": [
+        "Hourly (149)"
+      ]
+    },
+    {
+      "hook_type": "data-test",
+      "name": "filter-hourly-range UpCCheckbox FilterRange",
+      "tag": "label",
+      "sample_text": "Custom USDMinimum hourly job rate per hour/hrCustom USDMaximum hourly job rate per hour/hr",
+      "frequency": 1,
+      "sample_values": [
+        "Custom USDMinimum hourly job rate per hour/hrCustom USDMaximum hourly job rate per hour/hr"
+      ]
+    },
+    {
+      "hook_type": "data-test",
+      "name": "filter-fixed-job-type UpCCheckbox",
+      "tag": "label",
+      "sample_text": "Fixed-Price (77)",
+      "frequency": 1,
+      "sample_values": [
+        "Fixed-Price (77)"
+      ]
+    },
+    {
+      "hook_type": "data-test",
+      "name": "filter-fixed-price-custom UpCCheckbox FilterRange",
+      "tag": "label",
+      "sample_text": "Custom USDMinimum fixed price job rateCustom USDMaximum fixed price job rate",
+      "frequency": 1,
+      "sample_values": [
+        "Custom USDMinimum fixed price job rateCustom USDMaximum fixed price job rate"
+      ]
+    },
+    {
+      "hook_type": "data-test",
+      "name": "filter-sidebar-component_clientHires FilterCollapsible FilterStandard",
+      "tag": "div",
+      "sample_text": "Client historyClient history filterNo hires (92) 1 to 9 hires (77) 10+ hires (57)",
+      "frequency": 1,
+      "sample_values": [
+        "Client historyClient history filterNo hires (92) 1 to 9 hires (77) 10+ hires (57)"
+      ]
+    },
+    {
+      "hook_type": "data-test",
+      "name": "filter-sidebar-component_location FilterCollapsible FilterLocation",
+      "tag": "div",
+      "sample_text": "Client locationThis will show you clients from a specific region or country. (If you also filter by ",
+      "frequency": 1,
+      "sample_values": [
+        "Client locationThis will show you clients from a specific region or country. (If you also filter by "
+      ]
+    },
+    {
+      "hook_type": "data-test",
+      "name": "filter-client-location UpCDropdown",
+      "tag": "div",
+      "sample_text": "Select client locations",
+      "frequency": 1,
+      "sample_values": [
+        "Select client locations"
+      ]
+    },
+    {
+      "hook_type": "data-test",
+      "name": "filter-sidebar-component_timezones FilterCollapsible FilterTimezones",
+      "tag": "div",
+      "sample_text": "Client time zonesThis will show you clients from a specific time zone. (If you also filter by locati",
+      "frequency": 1,
+      "sample_values": [
+        "Client time zonesThis will show you clients from a specific time zone. (If you also filter by locati"
+      ]
+    },
+    {
+      "hook_type": "data-test",
+      "name": "filter-timezone UpCDropdown",
+      "tag": "div",
+      "sample_text": "Select client time zones",
+      "frequency": 1,
+      "sample_values": [
+        "Select client time zones"
+      ]
+    },
+    {
+      "hook_type": "data-test",
+      "name": "filter-sidebar-component_durationV3 FilterCollapsible FilterStandard",
+      "tag": "div",
+      "sample_text": "Project lengthProject length filterLess than one month (127) 1 to 3 months (134) 3 to 6 months (89) ",
+      "frequency": 1,
+      "sample_values": [
+        "Project lengthProject length filterLess than one month (127) 1 to 3 months (134) 3 to 6 months (89) "
+      ]
+    },
+    {
+      "hook_type": "data-test",
+      "name": "filter-sidebar-component_workload FilterCollapsible FilterStandard",
+      "tag": "div",
+      "sample_text": "Hours per weekHours per week filterLess than 30 hrs/week (86) More than 30 hrs/week (92)",
+      "frequency": 1,
+      "sample_values": [
+        "Hours per weekHours per week filterLess than 30 hrs/week (86) More than 30 hrs/week (92)"
+      ]
+    },
+    {
+      "hook_type": "data-test",
+      "name": "filter-sidebar-component_contractToHire FilterCollapsible FilterContractToHire",
+      "tag": "div",
+      "sample_text": "Job duration Contract-to-hire roles (33)",
+      "frequency": 1,
+      "sample_values": [
+        "Job duration Contract-to-hire roles (33)"
+      ]
+    },
+    {
+      "hook_type": "data-test",
+      "name": "JobsCountQA JobsCount",
+      "tag": "span",
+      "sample_text": "226 jobs found",
+      "frequency": 1,
+      "sample_values": [
+        "226 jobs found"
+      ]
+    },
+    {
+      "hook_type": "data-v",
+      "name": "data-v-a72580b5",
+      "tag": "span",
+      "sample_text": "226 jobs found",
+      "frequency": 1,
+      "sample_values": []
+    },
+    {
+      "hook_type": "data-test",
+      "name": "jobs-buttons-component JobsTopButtons",
+      "tag": "div",
+      "sample_text": "Sort bySort by: Newest",
+      "frequency": 1,
+      "sample_values": [
+        "Sort bySort by: Newest"
+      ]
+    },
+    {
+      "hook_type": "data-test",
+      "name": "JobsSort",
+      "tag": "div",
+      "sample_text": "Sort bySort by: Newest",
+      "frequency": 1,
+      "sample_values": [
+        "Sort bySort by: Newest"
+      ]
+    },
+    {
+      "hook_type": "data-test",
+      "name": "UpCDropdown",
+      "tag": "div",
+      "sample_text": "Sort by: Newest",
+      "frequency": 1,
+      "sample_values": [
+        "Sort by: Newest"
+      ]
+    },
+    {
+      "hook_type": "data-test",
+      "name": "JobsList",
+      "tag": "section",
+      "sample_text": "Posted 2 hours agoCloudflare Pages Developer: Move Website Assets Off WordPress & Host New Static Si",
+      "frequency": 1,
+      "sample_values": [
+        "Posted 2 hours agoCloudflare Pages Developer: Move Website Assets Off WordPress & Host New Static Si"
+      ]
+    },
+    {
+      "hook_type": "data-test",
+      "name": "UpCCard",
+      "tag": "div",
+      "sample_text": "Jobs Per Page: 10 PaginationFirst pagePrevious page1 of 23Current page 1 of 231go to page2go to page",
+      "frequency": 1,
+      "sample_values": [
+        "Jobs Per Page: 10 PaginationFirst pagePrevious page1 of 23Current page 1 of 231go to page2go to page"
+      ]
+    },
+    {
+      "hook_type": "air3-class",
+      "name": "air3-card-section",
+      "tag": "div",
+      "sample_text": "Jobs Per Page: 10 PaginationFirst pagePrevious page1 of 23Current page 1 of 231go to page2go to page",
+      "frequency": 1,
+      "sample_values": []
+    },
+    {
+      "hook_type": "data-test",
+      "name": "JobsPerPage",
+      "tag": "div",
+      "sample_text": "Jobs Per Page: 10",
+      "frequency": 1,
+      "sample_values": [
+        "Jobs Per Page: 10"
+      ]
+    },
+    {
+      "hook_type": "data-test",
+      "name": "jobs_per_page UpCDropdown",
+      "tag": "div",
+      "sample_text": "10",
+      "frequency": 1,
+      "sample_values": [
+        "10"
+      ]
+    },
+    {
+      "hook_type": "data-test",
+      "name": "JobsPagination",
+      "tag": "div",
+      "sample_text": "PaginationFirst pagePrevious page1 of 23Current page 1 of 231go to page2go to page3go to page4 ... N",
+      "frequency": 1,
+      "sample_values": [
+        "PaginationFirst pagePrevious page1 of 23Current page 1 of 231go to page2go to page3go to page4 ... N"
+      ]
+    },
+    {
+      "hook_type": "data-test",
+      "name": "UpCPagination",
+      "tag": "div",
+      "sample_text": "PaginationFirst pagePrevious page1 of 23Current page 1 of 231go to page2go to page3go to page4 ... N",
+      "frequency": 1,
+      "sample_values": [
+        "PaginationFirst pagePrevious page1 of 23Current page 1 of 231go to page2go to page3go to page4 ... N"
+      ]
+    },
+    {
+      "hook_type": "data-test",
+      "name": "pagination",
+      "tag": "ul",
+      "sample_text": "First pagePrevious page1 of 23Current page 1 of 231go to page2go to page3go to page4 ... Next pageLa",
+      "frequency": 1,
+      "sample_values": [
+        "First pagePrevious page1 of 23Current page 1 of 231go to page2go to page3go to page4 ... Next pageLa"
+      ]
+    },
+    {
+      "hook_type": "air3-class",
+      "name": "air3-pagination",
+      "tag": "ul",
+      "sample_text": "First pagePrevious page1 of 23Current page 1 of 231go to page2go to page3go to page4 ... Next pageLa",
+      "frequency": 1,
+      "sample_values": []
+    },
+    {
+      "hook_type": "data-test",
+      "name": "first-page",
+      "tag": "a",
+      "sample_text": null,
+      "frequency": 1,
+      "sample_values": []
+    },
+    {
+      "hook_type": "air3-class",
+      "name": "air3-pagination-btn-first",
+      "tag": "a",
+      "sample_text": null,
+      "frequency": 1,
+      "sample_values": []
+    },
+    {
+      "hook_type": "data-test",
+      "name": "prev-page",
+      "tag": "a",
+      "sample_text": null,
+      "frequency": 1,
+      "sample_values": []
+    },
+    {
+      "hook_type": "data-test",
+      "name": "pagination-mobile",
+      "tag": "li",
+      "sample_text": "1 of 23",
+      "frequency": 1,
+      "sample_values": [
+        "1 of 23"
+      ]
+    },
+    {
+      "hook_type": "air3-class",
+      "name": "air3-pagination-mobile",
+      "tag": "li",
+      "sample_text": "1 of 23",
+      "frequency": 1,
+      "sample_values": []
+    },
+    {
+      "hook_type": "data-test",
+      "name": "pagination-ellipsis",
+      "tag": "li",
+      "sample_text": "...",
+      "frequency": 1,
+      "sample_values": [
+        "..."
+      ]
+    },
+    {
+      "hook_type": "air3-class",
+      "name": "air3-pagination-ellipsis",
+      "tag": "li",
+      "sample_text": "...",
+      "frequency": 1,
+      "sample_values": []
+    },
+    {
+      "hook_type": "data-test",
+      "name": "next-page",
+      "tag": "a",
+      "sample_text": null,
+      "frequency": 1,
+      "sample_values": []
+    },
+    {
+      "hook_type": "data-test",
+      "name": "last-page",
+      "tag": "a",
+      "sample_text": null,
+      "frequency": 1,
+      "sample_values": []
+    },
+    {
+      "hook_type": "air3-class",
+      "name": "air3-pagination-btn-last",
+      "tag": "a",
+      "sample_text": null,
+      "frequency": 1,
+      "sample_values": []
+    },
+    {
+      "hook_type": "data-test",
+      "name": "MicroAppLbComponent",
+      "tag": "div",
+      "sample_text": "Footer navigation For Clients For Clients How to hireTalent MarketplaceProject CatalogHire an agency",
+      "frequency": 1,
+      "sample_values": [
+        "Footer navigation For Clients For Clients How to hireTalent MarketplaceProject CatalogHire an agency"
+      ]
+    },
+    {
+      "hook_type": "data-qa",
+      "name": "visitor-footer",
+      "tag": "footer",
+      "sample_text": "Footer navigation For Clients For Clients How to hireTalent MarketplaceProject CatalogHire an agency",
+      "frequency": 1,
+      "sample_values": [
+        "Footer navigation For Clients For Clients How to hireTalent MarketplaceProject CatalogHire an agency"
+      ]
+    },
+    {
+      "hook_type": "data-test",
+      "name": "consent-preferences-link",
+      "tag": "a",
+      "sample_text": "Your Privacy Choices California Consumer Privacy Act (CCPA) Opt-Out",
+      "frequency": 1,
+      "sample_values": [
+        "Your Privacy Choices California Consumer Privacy Act (CCPA) Opt-Out"
+      ]
+    },
+    {
+      "hook_type": "data-test",
+      "name": "UpUsabillaGetfeedback GetFeedbackSearchSurvey",
+      "tag": "div",
+      "sample_text": null,
+      "frequency": 1,
+      "sample_values": []
+    }
+  ],
+  "section_landmarks": [
+    {
+      "tag": "header",
+      "id": null,
+      "class": "nav-wrapper",
+      "data_test": null
+    },
+    {
+      "tag": "header",
+      "id": null,
+      "class": "main-header align-items-center mb-4x",
+      "data_test": null
+    },
+    {
+      "tag": "nav",
+      "id": "nav-right",
+      "class": "nav-d-flex nav-right",
+      "data_test": null
+    },
+    {
+      "tag": "nav",
+      "id": null,
+      "class": "",
+      "data_test": null
+    },
+    {
+      "tag": "nav",
+      "id": null,
+      "class": "",
+      "data_test": null
+    },
+    {
+      "tag": "main",
+      "id": "main",
+      "class": "",
+      "data_test": null
+    },
+    {
+      "tag": "footer",
+      "id": "visitor-footer",
+      "class": "v-footer",
+      "data_test": null
+    }
+  ],
+  "captured_xhr_endpoints": [
+    "https://www.upwork.com/api/graphql/v1?alias=WP3747BrazeIntegration-ff",
+    "https://www.upwork.com/api/graphql/v1?alias=autoSuggestions",
+    "https://www.upwork.com/api/graphql/v1?alias=deviceTrustIngestionProd-ff"
+  ]
+}

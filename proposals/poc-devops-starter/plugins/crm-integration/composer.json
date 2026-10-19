@@ -1,0 +1,26 @@
+{
+    "name": "upwork/crm-integration",
+    "description": "CRM Integration Plugin - Demonstrates webhook receiver, API client, and data sync patterns",
+    "type": "wordpress-plugin",
+    "require": {
+        "php": ">=8.1",
+        "guzzlehttp/guzzle": "^7.8",
+        "monolog/monolog": "^3.5",
+        "vlucas/phpdotenv": "^5.6"
+    },
+    "autoload": {
+        "psr-4": {
+            "Upwork\\CRMIntegration\\": "src/"
+        }
+    },
+    "authors": [
+        {
+            "name": "UpWork PoC",
+            "email": "dev@example.com"
+        }
+    ],
+    "config": {
+        "optimize-autoloader": true,
+        "sort-packages": true
+    }
+}

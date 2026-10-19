@@ -1,0 +1,22 @@
+{
+    "name": "upwork/site-architect",
+    "description": "Site Architecture Audit & Headless CMS - Theme analysis, plugin dependency graph, DB schema review, custom REST API",
+    "type": "wordpress-plugin",
+    "require": {
+        "php": ">=8.1"
+    },
+    "autoload": {
+        "psr-4": {
+            "Upwork\\SiteArchitect\\": "src/"
+        }
+    },
+    "authors": [
+        {
+            "name": "UpWork PoC",
+            "email": "dev@example.com"
+        }
+    ],
+    "config": {
+        "optimize-autoloader": true
+    }
+}

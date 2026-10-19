@@ -1,0 +1,22 @@
+{
+    "name": "upwork/wp-diagnostics",
+    "description": "WordPress Diagnostics Plugin - Monitors PHP memory, execution time, DB query performance, and crash patterns",
+    "type": "wordpress-plugin",
+    "require": {
+        "php": ">=8.1"
+    },
+    "autoload": {
+        "psr-4": {
+            "Upwork\\Diagnostics\\": "src/"
+        }
+    },
+    "authors": [
+        {
+            "name": "UpWork PoC",
+            "email": "dev@example.com"
+        }
+    ],
+    "config": {
+        "optimize-autoloader": true
+    }
+}

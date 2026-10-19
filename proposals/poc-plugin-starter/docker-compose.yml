@@ -1,0 +1,82 @@
+version: '3.8'
+
+services:
+  wordpress:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "8080:80"
+    environment:
+      WORDPRESS_DB_HOST: db
+      WORDPRESS_DB_USER: wordpress
+      WORDPRESS_DB_PASSWORD: wordpress
+      WORDPRESS_DB_NAME: wordpress
+      WORDPRESS_DEBUG: 1
+      WORDPRESS_CONFIG_EXTRA: |
+        define('WP_AUTO_UPDATE_CORE', false);
+        define('DISALLOW_FILE_EDIT', true);
+    volumes:
+      - ./plugins/wp-css-audit:/var/www/html/wp-content/plugins/wp-css-audit
+      - ./plugins/wp-custom-theme-kit:/var/www/html/wp-content/plugins/wp-custom-theme-kit
+      - ./plugins/wp-maintenance-suite:/var/www/html/wp-content/plugins/wp-maintenance-suite
+      - ./themes/custom-theme:/var/www/html/wp-content/themes/custom-theme
+      - wp_data:/var/www/html
+    depends_on:
+      db:
+        condition: service_healthy
+    restart: unless-stopped
+
+  db:
+    image: mysql:8
+    environment:
+      MYSQL_ROOT_PASSWORD: rootpassword
+      MYSQL_DATABASE: wordpress
+      MYSQL_USER: wordpress
+      MYSQL_PASSWORD: wordpress
+    volumes:
+      - db_data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    restart: unless-stopped
+
+  # WP-CLI for setup commands
+  wp-cli:
+    image: wordpress:cli
+    depends_on:
+      wordpress:
+        condition: service_started
+      db:
+        condition: service_healthy
+    volumes:
+      - wp_data:/var/www/html
+      - ./plugins/wp-css-audit:/var/www/html/wp-content/plugins/wp-css-audit
+      - ./plugins/wp-custom-theme-kit:/var/www/html/wp-content/plugins/wp-custom-theme-kit
+      - ./plugins/wp-maintenance-suite:/var/www/html/wp-content/plugins/wp-maintenance-suite
+      - ./themes/custom-theme:/var/www/html/wp-content/themes/custom-theme
+    environment:
+      WORDPRESS_DB_HOST: db
+      WORDPRESS_DB_USER: wordpress
+      WORDPRESS_DB_PASSWORD: wordpress
+      WORDPRESS_DB_NAME: wordpress
+    entrypoint: ["/bin/sh", "-c"]
+    command: ["echo 'WP-CLI ready. Run: docker compose run wp-cli wp ...'"]
+
+  # NPM build service for Tailwind
+  npm-build:
+    image: node:20-alpine
+    working_dir: /app
+    volumes:
+      - ./themes/custom-theme:/app
+      - ./plugins/wp-css-audit:/app-css-audit
+      - ./plugins/wp-custom-theme-kit:/app-custom-theme-kit
+      - ./plugins/wp-maintenance-suite:/app-maintenance-suite
+    entrypoint: ["/bin/sh", "-c"]
+    command: ["echo 'NPM ready. Run: docker compose run npm-build npm install && npm run build'"]
+
+volumes:
+  db_data:
+  wp_data:
