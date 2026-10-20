@@ -209,24 +209,51 @@ def _parse_spend(spend: str) -> float:
 
 # ── Job Loading ──────────────────────────────────────────────────────────
 
-def load_jobs(output_dir: str | Path = "/var/www/upwork-scraper-fs/output") -> list[dict[str, Any]]:
-    """Load all jobs from upwork_*.json files, deduplicating by URL."""
-    path = Path(output_dir)
+def load_jobs(
+    output_dir_or_file: str | Path = "/var/www/upwork-scraper-fs/output",
+) -> list[dict[str, Any]]:
+    """Load jobs from JSON files, deduplicating by URL.
+
+    Supports both SearchResult envelopes ({"jobs": [...]}) and raw JSON lists ([{...}, ...]).
+    Can accept a specific file path or an entire directory.
+    """
+    target = Path(output_dir_or_file)
     seen_urls: set[str] = set()
     jobs: list[dict[str, Any]] = []
 
-    for f in sorted(path.glob("upwork_*.json")):
+    files_to_read: list[Path] = []
+    if target.is_file():
+        files_to_read = [target]
+    elif target.is_dir():
+        # Match upwork_*.json first, but also include other json files if no upwork_* exist
+        files_to_read = sorted([p for p in target.glob("*.json") if "ui_reports" not in str(p)])
+        upwork_files = [p for p in files_to_read if p.name.startswith("upwork_")]
+        if upwork_files:
+            files_to_read = upwork_files
+
+    for f in files_to_read:
         try:
-            data = json.loads(f.read_text())
+            data = json.loads(f.read_text(encoding="utf-8"))
         except (json.JSONDecodeError, OSError):
             continue
 
-        for job in data.get("jobs", []):
+        file_jobs: list[dict[str, Any]] = []
+        file_query = ""
+        if isinstance(data, dict):
+            file_jobs = data.get("jobs", [])
+            file_query = str(data.get("query", ""))
+        elif isinstance(data, list):
+            file_jobs = data
+
+        for job in file_jobs:
+            if not isinstance(job, dict):
+                continue
             url = job.get("url", "")
             if url and url not in seen_urls:
                 seen_urls.add(url)
                 job["_source_file"] = f.name
-                job["_query"] = data.get("query", "")
+                if file_query:
+                    job["_query"] = file_query
                 job["_score"] = score_job(job)
                 jobs.append(job)
 
@@ -449,9 +476,9 @@ def _match_portfolio_references(job: dict[str, Any]) -> list[dict[str, str]]:
     for ref in PORTFOLIO_REFERENCES:
         if any(keyword in haystack for keyword in ref["keywords"]):
             matches.append({
-                "title": ref["title"],
-                "url": ref["url"],
-                "description": ref["description"],
+                "title": str(ref["title"]),
+                "url": str(ref["url"]),
+                "description": str(ref["description"]),
             })
     return matches[:3]
 
