@@ -17,7 +17,6 @@ from __future__ import annotations
 
 import argparse
 import logging
-import sys
 
 from src.config_schema import load_profile_config
 from src.orchestrator import ConfigurableScraper, UpWorkScraper
@@ -183,6 +182,8 @@ def main(argv: list[str] | None = None) -> int:
     # 2. Apply CLI overrides to profile
     if args.query is not None:
         profile.search.query = args.query
+        if args.queries is None:
+            profile.search.queries = []
     if args.queries is not None:
         profile.search.queries = [q.strip() for q in args.queries.split(",") if q.strip()]
     if args.per_page is not None:
@@ -268,7 +269,3 @@ def _run_legacy(args: argparse.Namespace) -> int:
         return 0
     finally:
         scraper.close()
-
-
-if __name__ == "__main__":
-    sys.exit(main())

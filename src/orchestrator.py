@@ -18,6 +18,7 @@ from src.output import save_jobs, save_jobs_with_prefix
 from src.parser import ConfigurableDomParser, parse_job_detail, parse_job_listings
 from src.proposal_engine import (
     job_meets_proposal_threshold,
+    keyword_matches,
     parse_posted_age,
     parse_proposal_count,
     score_job,
@@ -129,12 +130,23 @@ class ConfigurableScraper:
 
         final_jobs = filtered_jobs
         if should_enrich and filtered_jobs:
+            auto_cap = None
             if needs_proposal_enrichment and not self.profile.enrichment.enabled:
-                logger.info(
-                    "Auto-enabling detail enrichment to resolve proposal counts for max_proposals=%d",
-                    max_proposals,
-                )
-            final_jobs = self._run_enrichment(filtered_jobs)
+                # Pre-score and sort candidates so top opportunities are enriched first
+                filtered_jobs.sort(key=lambda j: score_job(asdict(j)), reverse=True)
+                if self.profile.enrichment.max_jobs_to_enrich is None:
+                    auto_cap = min(25, self.profile.search.target_jobs or 25)
+                    logger.info(
+                        "Auto-enabling detail enrichment to resolve proposal counts for max_proposals=%d (capped at top %d jobs)",
+                        max_proposals,
+                        auto_cap,
+                    )
+                else:
+                    logger.info(
+                        "Auto-enabling detail enrichment to resolve proposal counts for max_proposals=%d",
+                        max_proposals,
+                    )
+            final_jobs = self._run_enrichment(filtered_jobs, max_enrich_override=auto_cap)
 
         # Enforce final upper-bound proposal threshold after enrichment
         if max_proposals is not None:
@@ -290,22 +302,27 @@ class ConfigurableScraper:
         """Apply keyword, recency, proposal count, and score threshold filters."""
         filtered = list(jobs)
 
-        # Required keywords
+        # Helper to construct combined haystack across title, description, and skills
+        def _job_haystack(j: UpWorkJob) -> str:
+            skills_text = " ".join(j.skills)
+            return f"{j.title} {j.description} {skills_text}".lower()
+
+        # Required keywords (boundary-aware matching)
         if self.profile.filters.required_keywords:
             keywords = [k.lower() for k in self.profile.filters.required_keywords]
             filtered = [
                 j
                 for j in filtered
-                if any(k in j.title.lower() or k in j.description.lower() for k in keywords)
+                if any(keyword_matches(k, _job_haystack(j)) for k in keywords)
             ]
 
-        # Exclude keywords
+        # Exclude keywords (boundary-aware matching)
         if self.profile.filters.exclude_keywords:
             ex_keywords = [k.lower() for k in self.profile.filters.exclude_keywords]
             filtered = [
                 j
                 for j in filtered
-                if not any(k in j.title.lower() or k in j.description.lower() for k in ex_keywords)
+                if not any(keyword_matches(k, _job_haystack(j)) for k in ex_keywords)
             ]
 
         # Max posted age days
@@ -337,7 +354,7 @@ class ConfigurableScraper:
             for j in filtered:
                 sc = score_job(asdict(j))
                 if self.profile.filters.min_score is None or sc >= self.profile.filters.min_score:
-                    scored.append((sc, j))
+                    scored.append((sc, j))\
 
             # Sort descending by score
             scored.sort(key=lambda item: item[0], reverse=True)
@@ -345,11 +362,19 @@ class ConfigurableScraper:
 
         return filtered
 
-    def _run_enrichment(self, jobs: list[UpWorkJob]) -> list[UpWorkJob]:
+    def _run_enrichment(
+        self,
+        jobs: list[UpWorkJob],
+        max_enrich_override: int | None = None,
+    ) -> list[UpWorkJob]:
         """Scrape full detail pages, merge attributes, and optionally re-score and re-sort."""
-        max_enrich = self.profile.enrichment.max_jobs_to_enrich
-        targets = jobs[:max_enrich] if max_enrich is not None else jobs
-        remaining = jobs[max_enrich:] if max_enrich is not None else []
+        effective_max = (
+            max_enrich_override
+            if max_enrich_override is not None
+            else self.profile.enrichment.max_jobs_to_enrich
+        )
+        targets = jobs[:effective_max] if effective_max is not None else jobs
+        remaining = jobs[effective_max:] if effective_max is not None else []
 
         enriched_list: list[UpWorkJob] = []
         for i, job in enumerate(targets, 1):

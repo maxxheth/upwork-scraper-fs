@@ -30,6 +30,7 @@ def parse_posted_age(posted: str | None) -> int | None:
     """Parse a human-readable posted string into approximate days old.
 
     Handles formats like:
+      - "Posted 15 minutes ago" / "Posted 45 mins ago"
       - "Posted 1 hour ago" / "Posted 2 hours ago"
       - "Posted 3 days ago" / "Posted 5 days ago"
       - "Posted 1 week ago" / "Posted 2 weeks ago"
@@ -50,9 +51,13 @@ def parse_posted_age(posted: str | None) -> int | None:
     if text == "yesterday":
         return 1
 
+    # Minutes or seconds ago (< 1 hour -> 0 days old)
+    if re.search(r"(\d+)\s*(?:minute|min|second|sec)", text):
+        return 0
+
     m = re.search(r"(\d+)\s*hour", text)
     if m:
-        return max(1, int(m.group(1)) // 24)
+        return int(m.group(1)) // 24
 
     m = re.search(r"(\d+)\s*day", text)
     if m:
@@ -150,6 +155,31 @@ def job_meets_proposal_threshold(
     return upper <= max_proposals
 
 
+# ── Keyword Matching ───────────────────────────────────────────────────────
+
+def keyword_matches(keyword: str, text: str) -> bool:
+    """Check if keyword matches within text with word boundary semantics.
+
+    Prevents short keywords (e.g., 'go', 'ai', 'rag') from false-matching inside
+    unrelated words like 'google', 'django', 'email', 'tailwind', or 'storage',
+    while properly matching symbols like 'c#', '.net', 'next.js', and 'ci/cd'.
+    """
+    kw = keyword.strip().lower()
+    t = text.lower()
+    if not kw or not t:
+        return False
+
+    # Terms starting with punctuation (like '.net')
+    if kw.startswith("."):
+        pattern = r"(?:^|(?<=[^a-z0-9_])|(?<=[a-z0-9_]))" + re.escape(kw) + r"(?![a-z0-9])"
+    else:
+        prefix = r"(?<![a-z0-9])" if kw[0].isalnum() else r"(?<![a-z0-9_])"
+        suffix = r"(?![a-z0-9])" if kw[-1].isalnum() else r"(?![a-z0-9_])"
+        pattern = prefix + re.escape(kw) + suffix
+
+    return bool(re.search(pattern, t))
+
+
 # ── Scoring ───────────────────────────────────────────────────────────────
 
 # Your portfolio keywords for skill matching
@@ -206,24 +236,52 @@ PORTFOLIO_REFERENCES = [
 PROPOSAL_SCHEMA_VERSION = "1.0"
 
 
+def _parse_budget_amount(budget: str | None) -> float:
+    """Parse numeric dollar amount from budget string like '$1,500.00' or '$500'."""
+    if not budget:
+        return 0.0
+    cleaned = budget.replace(",", "")
+    m = re.search(r"\$([0-9]+(?:\.[0-9]+)?)", cleaned)
+    if m:
+        try:
+            return float(m.group(1))
+        except ValueError:
+            return 0.0
+    return 0.0
+
+
 def score_job(job: dict[str, Any]) -> int:
     """Score a single job on 0-100 scale."""
     score = 0
 
     # Rate match (25 pts)
     rate = job.get("hourly_rate", "") or ""
-    if any(f"${n}" in rate for n in ["50", "60", "70", "80", "90"]):
-        score += 25
-    elif any(f"${n}" in rate for n in ["100", "110", "125", "150"]):
-        score += 20
-    elif any(f"${n}" in rate for n in ["30", "40"]):
-        score += 10
-    elif "Fixed" in rate:
-        score += 5
+    budget = job.get("budget", "") or ""
+
+    if rate:
+        if any(f"${n}" in rate for n in ["50", "60", "70", "80", "90"]):
+            score += 25
+        elif any(f"${n}" in rate for n in ["100", "110", "125", "150"]):
+            score += 20
+        elif any(f"${n}" in rate for n in ["30", "40"]):
+            score += 10
+        elif "Fixed" in rate:
+            score += 5
+    elif budget:
+        # Fixed-price budget evaluation
+        amount = _parse_budget_amount(budget)
+        if amount >= 1_000:
+            score += 20
+        elif amount >= 500:
+            score += 15
+        elif amount >= 200:
+            score += 10
+        else:
+            score += 5
 
     # Skill match (25 pts)
     skills = [s.lower() for s in job.get("skills", [])]
-    matches = sum(1 for k in PORTFOLIO_KEYWORDS if any(k in s for s in skills))
+    matches = sum(1 for k in PORTFOLIO_KEYWORDS if any(keyword_matches(k, s) for s in skills))
     score += min(25, matches * 5)
 
     # Client spend (15 pts)
@@ -304,24 +362,44 @@ def _parse_spend(spend: str) -> float:
 
 # ── Job Loading ────────────────────────────────────────────────────────────
 
+def _metadata_richness(job: dict[str, Any]) -> int:
+    """Calculate metadata richness score for conflict resolution during deduplication."""
+    score = 0
+    if job.get("proposals"):
+        score += 5
+    if job.get("client_spent"):
+        score += 3
+    if job.get("client_hires"):
+        score += 2
+    desc = job.get("description") or ""
+    if len(desc) > 300:
+        score += 4
+    elif len(desc) > 100:
+        score += 1
+    return score
+
+
 def load_jobs(
     output_dir_or_file: str | Path = "/var/www/upwork-scraper-fs/output",
 ) -> list[dict[str, Any]]:
-    """Load jobs from JSON files, deduplicating by URL.
+    """Load jobs from JSON files, deduplicating by URL and prioritizing enriched records.
 
     Supports both SearchResult envelopes ({"jobs": [...]}) and raw JSON lists ([{...}, ...]).
     Can accept a specific file path or an entire directory.
     """
     target = Path(output_dir_or_file)
-    seen_urls: set[str] = set()
-    jobs: list[dict[str, Any]] = []
+    seen_jobs_by_url: dict[str, dict[str, Any]] = {}
 
     files_to_read: list[Path] = []
     if target.is_file():
         files_to_read = [target]
     elif target.is_dir():
-        # Match upwork_*.json first, but also include other json files if no upwork_* exist
-        files_to_read = sorted([p for p in target.glob("*.json") if "ui_reports" not in str(p)])
+        # Read files sorted by modification time descending so freshest outputs take precedence
+        files_to_read = sorted(
+            [p for p in target.glob("*.json") if "ui_reports" not in str(p)],
+            key=lambda p: p.stat().st_mtime,
+            reverse=True,
+        )
         upwork_files = [p for p in files_to_read if p.name.startswith("upwork_")]
         if upwork_files:
             files_to_read = upwork_files
@@ -344,15 +422,23 @@ def load_jobs(
             if not isinstance(job, dict):
                 continue
             url = job.get("url", "")
-            if url and url not in seen_urls:
-                seen_urls.add(url)
-                job["_source_file"] = f.name
-                if file_query:
-                    job["_query"] = file_query
-                job["_score"] = score_job(job)
-                jobs.append(job)
+            if not url:
+                continue
 
-    return jobs
+            job["_source_file"] = f.name
+            if file_query and not job.get("_query"):
+                job["_query"] = file_query
+            job["_score"] = score_job(job)
+
+            if url not in seen_jobs_by_url:
+                seen_jobs_by_url[url] = job
+            else:
+                # Merge: prefer record with richer metadata (e.g. enriched detail page over search card)
+                existing = seen_jobs_by_url[url]
+                if _metadata_richness(job) > _metadata_richness(existing):
+                    seen_jobs_by_url[url] = job
+
+    return list(seen_jobs_by_url.values())
 
 
 # ── Display ────────────────────────────────────────────────────────────────
@@ -396,14 +482,21 @@ def generate_proposal(job: dict[str, Any]) -> str:
     title = job.get("title", "this project")
     skills = [s.lower() for s in job.get("skills", [])]
     desc = job.get("description", "") or ""
+    haystack = f"{title} {desc} {' '.join(skills)}".lower()
 
-    # Determine job category
-    is_wp = any("wordpress" in s for s in skills)
-    is_python = any("python" in s for s in skills)
-    is_golang = any("golang" in s or "go " in s for s in skills)
-    is_devops = any(k in s for s in skills for k in ["aws", "devops", "terraform", "docker", "ci/cd", "kubernetes", "linux"]) or any(k in desc.lower() for k in ["terraform", "aws cloud", "ci/cd", "devops"])
-    is_ai = any(k in s for s in skills for k in ["llm", "openai", "claude", "anthropic", "rag", "langchain", "ai agent"]) or any(k in desc.lower() for k in ["openai", "claude api", "llm integration", "rag "])
-    is_audit = any(w in desc.lower() for w in ["audit", "review", "fix", "bug", "issue"])
+    # Determine job category using boundary-aware keyword matching
+    is_wp = any(keyword_matches("wordpress", s) for s in skills) or keyword_matches("wordpress", haystack)
+    is_python = any(keyword_matches("python", s) for s in skills) or keyword_matches("python", haystack)
+    is_golang = any(keyword_matches("golang", s) or keyword_matches("go", s) for s in skills) or keyword_matches("golang", haystack)
+
+    devops_terms = ["aws", "devops", "terraform", "docker", "ci/cd", "kubernetes", "linux", "ansible"]
+    is_devops = any(keyword_matches(k, haystack) for k in devops_terms)
+
+    ai_terms = ["llm", "openai", "claude", "anthropic", "rag", "langchain", "agent", "gpt"]
+    is_ai = any(keyword_matches(k, haystack) for k in ai_terms)
+
+    audit_terms = ["audit", "review", "fix", "bug", "issue"]
+    is_audit = any(keyword_matches(w, desc.lower()) for w in audit_terms)
 
     # Extract a specific problem from the description
     problem = _extract_problem(desc, title)
@@ -619,12 +712,12 @@ def _split_subject_body(proposal_text: str, fallback_title: str) -> tuple[str, s
 
 
 def match_portfolio_references(job: dict[str, Any]) -> list[dict[str, str]]:
-    """Match portfolio project references against job title, description, and skills."""
+    """Match portfolio project references against job title, description, and skills using boundary matching."""
     skills_text = " ".join(job.get("skills", [])).lower()
     haystack = f"{job.get('title', '')} {job.get('description', '')} {skills_text}".lower()
     matches: list[dict[str, str]] = []
     for ref in PORTFOLIO_REFERENCES:
-        if any(keyword in haystack for keyword in ref["keywords"]):
+        if any(keyword_matches(keyword, haystack) for keyword in ref["keywords"]):
             matches.append({
                 "title": str(ref["title"]),
                 "url": str(ref["url"]),
@@ -642,7 +735,7 @@ def _score_reasoning(job: dict[str, Any]) -> list[str]:
     score = int(job.get("_score", 0))
     rate = job.get("hourly_rate") or job.get("budget") or ""
     skills = [s.lower() for s in job.get("skills", [])]
-    matching_skills = sorted({k for k in PORTFOLIO_KEYWORDS if any(k in s for s in skills)})
+    matching_skills = sorted({k for k in PORTFOLIO_KEYWORDS if any(keyword_matches(k, s) for s in skills)})
     spend = job.get("client_spent") or ""
     hires = job.get("client_hires")
     posted = job.get("posted") or ""
