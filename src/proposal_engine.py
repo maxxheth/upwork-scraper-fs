@@ -5,6 +5,7 @@ Usage:
     uv run python -m src.proposal_engine --generate
     uv run python -m src.proposal_engine --top 3
     uv run python -m src.proposal_engine --query "wordpress" --generate
+    uv run python -m src.proposal_engine --query "wordpress" --max-proposals 15 --generate
 """
 
 from __future__ import annotations
@@ -23,7 +24,7 @@ from typing import Any
 
 logger = logging.getLogger(__name__)
 
-# ── Recency Filter ─────────────────────────────────────────────────────
+# ── Recency & Proposal Filters ─────────────────────────────────────────────
 
 def parse_posted_age(posted: str | None) -> int | None:
     """Parse a human-readable posted string into approximate days old.
@@ -72,7 +73,84 @@ def parse_posted_age(posted: str | None) -> int | None:
     return None
 
 
-# ── Scoring ──────────────────────────────────────────────────────────────
+def parse_proposal_count(proposals: str | int | None) -> int | None:
+    """Parse an UpWork proposal tier string into its upper-bound integer count.
+
+    UpWork renders proposals in tiers such as:
+      - "Less than 5" -> 4 (upper bound < 5)
+      - "5 to 10"     -> 10
+      - "10 to 15"    -> 15
+      - "15 to 20"    -> 20
+      - "20 to 50"    -> 50
+      - "50+"         -> 999 (unbounded above 50)
+
+    Returns:
+        Upper-bound proposal count as an integer, or None if missing/unparseable.
+    """
+    if proposals is None:
+        return None
+    if isinstance(proposals, int):
+        return proposals
+
+    text = str(proposals).strip()
+    if not text:
+        return None
+
+    # Strip leading "Proposals:" label if present
+    text = re.sub(r"^proposals\s*:\s*", "", text, flags=re.IGNORECASE).strip()
+    lower = text.lower()
+
+    # 1. "Less than N" or "< N"
+    m_less = re.search(r"(?:less\s+than|<)\s*(\d+)", lower)
+    if m_less:
+        val = int(m_less.group(1))
+        return max(0, val - 1)
+
+    # 2. Range "A to B" or "A - B"
+    m_range = re.search(r"(\d+)\s*(?:to|-|\u2013)\s*(\d+)", lower)
+    if m_range:
+        return int(m_range.group(2))
+
+    # 3. Unbounded "N+" or "More than N" / "Over N"
+    m_plus = re.search(r"(\d+)\s*\+|(?:more\s+than|over|>)\s*(\d+)", lower)
+    if m_plus:
+        base = int(m_plus.group(1) or m_plus.group(2))
+        return max(base + 1, 999)
+
+    # 4. Exact integer (e.g. "12" or "12 proposals")
+    m_exact = re.match(r"^(\d+)(?:\s+proposals?)?$", lower)
+    if m_exact:
+        return int(m_exact.group(1))
+
+    return None
+
+
+def job_meets_proposal_threshold(
+    proposals: str | int | None,
+    max_proposals: int | None,
+    *,
+    include_unknown: bool = True,
+) -> bool:
+    """Check whether a job's proposal count is within the given upper-bound threshold.
+
+    Args:
+        proposals: Raw proposals tier string (e.g. "5 to 10") or integer.
+        max_proposals: Maximum allowed upper-bound proposals (e.g. 15 includes
+            "Less than 5", "5 to 10", and "10 to 15", while excluding "15 to 20",
+            "20 to 50", and "50+"). If None, all jobs pass.
+        include_unknown: Whether jobs with missing/unparseable proposal counts pass.
+    """
+    if max_proposals is None:
+        return True
+
+    upper = parse_proposal_count(proposals)
+    if upper is None:
+        return include_unknown
+
+    return upper <= max_proposals
+
+
+# ── Scoring ────────────────────────────────────────────────────────────────
 
 # Your portfolio keywords for skill matching
 PORTFOLIO_KEYWORDS = [
@@ -156,14 +234,17 @@ def score_job(job: dict[str, Any]) -> int:
 
     # Proposal count (10 pts — lower is better)
     proposals = job.get("proposals", "") or ""
-    if "10 to 15" in proposals or "5 to 10" in proposals:
-        score += 10
-    elif "20 to 50" in proposals:
-        score += 5
-    elif "50+" in proposals:
-        score += 2
-    elif not proposals:
+    upper_proposals = parse_proposal_count(proposals)
+    if upper_proposals is None:
         score += 8
+    elif upper_proposals <= 15:
+        score += 10
+    elif upper_proposals <= 20:
+        score += 7
+    elif upper_proposals <= 50:
+        score += 5
+    else:
+        score += 2
 
     # Recency (10 pts)
     posted = (job.get("posted") or "").lower()
@@ -207,7 +288,7 @@ def _parse_spend(spend: str) -> float:
         return 0.0
 
 
-# ── Job Loading ──────────────────────────────────────────────────────────
+# ── Job Loading ────────────────────────────────────────────────────────────
 
 def load_jobs(
     output_dir_or_file: str | Path = "/var/www/upwork-scraper-fs/output",
@@ -260,7 +341,7 @@ def load_jobs(
     return jobs
 
 
-# ── Display ──────────────────────────────────────────────────────────────
+# ── Display ────────────────────────────────────────────────────────────────
 
 def _score_label(score: int) -> str:
     if score >= 80:
@@ -294,7 +375,7 @@ def print_job(job: dict[str, Any], index: int = 0) -> None:
     print()
 
 
-# ── Proposal Generation ─────────────────────────────────────────────────
+# ── Proposal Generation ───────────────────────────────────────────────────
 
 def generate_proposal(job: dict[str, Any]) -> str:
     """Generate a proposal for a job based on its type and your portfolio."""
@@ -438,7 +519,7 @@ Best,
 Maxx"""
 
 
-# ── Structured Proposal Output ──────────────────────────────────────────
+# ── Structured Proposal Output ─────────────────────────────────────────────
 
 def _now_iso() -> str:
     return datetime.now(UTC).isoformat()
@@ -731,7 +812,7 @@ def push_to_buddy(
         raise RuntimeError(f"Could not reach UpWork Buddy at {endpoint}: {exc.reason}") from exc
 
 
-# ── CLI ──────────────────────────────────────────────────────────────────
+# ── CLI ────────────────────────────────────────────────────────────────────
 
 def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
     """Parse command-line arguments."""
@@ -772,6 +853,12 @@ def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
         type=int,
         default=21,
         help="Maximum age in days for a job to be considered (default: 21, 0=no filter)",
+    )
+    parser.add_argument(
+        "--max-proposals",
+        type=int,
+        default=0,
+        help="Maximum proposals upper-bound to include (e.g. 15 keeps 'Less than 5', '5 to 10', '10 to 15'; 0=no filter)",
     )
     parser.add_argument(
         "--output-dir",
@@ -837,12 +924,27 @@ def main(argv: list[str] | None = None) -> int:
         if filtered:
             print(f"   🗑️ Filtered {filtered} jobs older than {args.max_age} days")
 
+    # Filter by max proposals (upper-bound comparison)
+    if args.max_proposals > 0:
+        before = len(jobs)
+        jobs = [
+            j for j in jobs
+            if job_meets_proposal_threshold(
+                j.get("proposals"),
+                args.max_proposals,
+                include_unknown=False,
+            )
+        ]
+        filtered = before - len(jobs)
+        if filtered:
+            print(f"   🗑️ Filtered {filtered} jobs exceeding {args.max_proposals} proposals (or missing proposal count)")
+
     # Limit
     if args.top > 0:
         jobs = jobs[:args.top]
 
     if not jobs:
-        print("No jobs meet the minimum score threshold.")
+        print("No jobs meet the minimum score/filter threshold.")
         return 0
 
     # Print summary

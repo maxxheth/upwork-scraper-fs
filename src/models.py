@@ -21,6 +21,7 @@ class UpWorkJob:
     posted: str | None = None
     country: str | None = None
     proposals: str | None = None
+    proposals_count: int | None = None
     client_rating: float | None = None
     client_reviews: int | None = None
     client_hires: int | None = None

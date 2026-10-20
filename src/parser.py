@@ -23,6 +23,7 @@ from src.config_schema import (
     load_selector_config,
 )
 from src.models import UpWorkJob
+from src.proposal_engine import parse_proposal_count
 
 logger = logging.getLogger(__name__)
 
@@ -174,6 +175,9 @@ class ConfigurableDomParser:
                     if val_span:
                         raw_val = _text(val_span[0])
                         break
+            # Fallback if a direct element selector (e.g. [data-test='proposals-tier']) matched
+            if raw_val is None and matched_elements and not matched_elements[0].css("span.title"):
+                raw_val = _full_text(matched_elements[0])
 
         if raw_val is None:
             return None
@@ -195,6 +199,9 @@ class ConfigurableDomParser:
                 result = re.sub(r"^Summary\s*", "", result)
             elif tr == "strip_total_suffix" and isinstance(result, str):
                 result = result.split(" total")[0] if " total" in result else result
+            elif tr == "clean_proposals_text" and isinstance(result, str):
+                result = re.sub(r"^Proposals\s*:\s*", "", result, flags=re.IGNORECASE).strip()
+                result = re.sub(r"Close the tooltip.*$", "", result, flags=re.IGNORECASE).strip()
             elif tr == "first_token_float" and isinstance(result, str):
                 with suppress(ValueError, IndexError):
                     result = float(result.split()[0])
@@ -276,6 +283,7 @@ class ConfigurableDomParser:
 
                 proposals_rule = fields.get("proposals")
                 proposals = self.extract_field(card, proposals_rule) if proposals_rule else None
+                proposals_str = proposals if isinstance(proposals, str) and proposals else None
 
                 rating_rule = fields.get("client_rating")
                 client_rating = self.extract_field(card, rating_rule) if rating_rule else None
@@ -294,7 +302,8 @@ class ConfigurableDomParser:
                         skills=skills if isinstance(skills, list) else [],
                         posted=posted if isinstance(posted, str) else None,
                         country=country if isinstance(country, str) else None,
-                        proposals=proposals if isinstance(proposals, str) else None,
+                        proposals=proposals_str,
+                        proposals_count=parse_proposal_count(proposals_str),
                         client_rating=float(client_rating) if client_rating is not None else None,
                         session_id=session_id,
                     )
@@ -374,6 +383,7 @@ class ConfigurableDomParser:
         # Proposals
         proposals_rule = fields.get("proposals")
         proposals = self.extract_field(sel, proposals_rule) if proposals_rule else None
+        proposals_str = str(proposals) if proposals else None
 
         # Client info
         rating_rule = fields.get("client_rating")
@@ -403,7 +413,8 @@ class ConfigurableDomParser:
             skills=skills,
             posted=str(posted) if posted else None,
             country=str(country) if country else None,
-            proposals=str(proposals) if proposals else None,
+            proposals=proposals_str,
+            proposals_count=parse_proposal_count(proposals_str),
             client_rating=float(client_rating) if client_rating is not None else None,
             client_hires=client_hires,
             client_spent=str(client_spent) if client_spent else None,
