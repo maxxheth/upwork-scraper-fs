@@ -150,7 +150,7 @@ def job_meets_proposal_threshold(
     return upper <= max_proposals
 
 
-# ── Scoring ────────────────────────────────────────────────────────────────
+# ── Scoring ───────────────────────────────────────────────────────────────
 
 # Your portfolio keywords for skill matching
 PORTFOLIO_KEYWORDS = [
@@ -160,6 +160,8 @@ PORTFOLIO_KEYWORDS = [
     "css", "html", "rest", "graphql", "nginx", "redis", "linux",
     "scrapy", "selenium", "playwright", "puppeteer", "pandas",
     "fastapi", "flask", "django", "next.js", "nuxt",
+    "terraform", "ansible", "ci/cd", "github actions", "cloudflare", "ubuntu",
+    "llm", "openai", "claude", "anthropic", "rag", "langchain", "agent",
 ]
 
 PORTFOLIO_REFERENCES = [
@@ -178,7 +180,7 @@ PORTFOLIO_REFERENCES = [
     {
         "title": "UpWork Scraper",
         "url": "",
-        "keywords": ["python", "scraper", "scrapy", "selenium", "playwright", "puppeteer", "api", "proxy"],
+        "keywords": ["python", "scraper", "scrapy", "selenium", "playwright", "puppeteer", "api", "proxy", "fastapi"],
         "description": "Python scraping pipeline for JS-rendered pages, Cloudflare bypass, and proxy rotation.",
     },
     {
@@ -186,6 +188,18 @@ PORTFOLIO_REFERENCES = [
         "url": "",
         "keywords": ["golang", "go", "postgresql", "api", "typescript", "react", "docker"],
         "description": "Go/PostgreSQL backend and TypeScript browser assistant for job analysis workflow.",
+    },
+    {
+        "title": "Cloud Infrastructure & CI/CD",
+        "url": "",
+        "keywords": ["aws", "devops", "terraform", "docker", "ci/cd", "github actions", "nginx", "linux", "ubuntu"],
+        "description": "Production AWS infrastructure orchestration, Docker containerization, and automated GitHub Actions CI/CD pipelines.",
+    },
+    {
+        "title": "AI Workflow Automation",
+        "url": "",
+        "keywords": ["llm", "openai", "claude", "anthropic", "rag", "langchain", "agent", "fastapi", "python"],
+        "description": "Autonomous AI agent workflows, LLM tool integrations, and RAG pipelines for structured business data automation.",
     },
 ]
 
@@ -375,7 +389,7 @@ def print_job(job: dict[str, Any], index: int = 0) -> None:
     print()
 
 
-# ── Proposal Generation ───────────────────────────────────────────────────
+# ── Proposal Generation ────────────────────────────────────────────────────
 
 def generate_proposal(job: dict[str, Any]) -> str:
     """Generate a proposal for a job based on its type and your portfolio."""
@@ -387,6 +401,8 @@ def generate_proposal(job: dict[str, Any]) -> str:
     is_wp = any("wordpress" in s for s in skills)
     is_python = any("python" in s for s in skills)
     is_golang = any("golang" in s or "go " in s for s in skills)
+    is_devops = any(k in s for s in skills for k in ["aws", "devops", "terraform", "docker", "ci/cd", "kubernetes", "linux"]) or any(k in desc.lower() for k in ["terraform", "aws cloud", "ci/cd", "devops"])
+    is_ai = any(k in s for s in skills for k in ["llm", "openai", "claude", "anthropic", "rag", "langchain", "ai agent"]) or any(k in desc.lower() for k in ["openai", "claude api", "llm integration", "rag "])
     is_audit = any(w in desc.lower() for w in ["audit", "review", "fix", "bug", "issue"])
 
     # Extract a specific problem from the description
@@ -396,6 +412,10 @@ def generate_proposal(job: dict[str, Any]) -> str:
         return _proposal_wp_fix(title, problem)
     if is_wp:
         return _proposal_wp_theme(title, problem)
+    if is_ai:
+        return _proposal_ai_integration(title, problem)
+    if is_devops:
+        return _proposal_devops(title, problem)
     if is_python:
         return _proposal_python(title, problem)
     if is_golang:
@@ -501,6 +521,54 @@ Best,
 Maxx"""
 
 
+def _proposal_devops(title: str, problem: str) -> str:
+    return f"""Subject: DevOps & Cloud Infrastructure Engineer — {title[:60]}
+
+Hi there,
+
+I read your post about {problem[:100].lower()}. I build and maintain reliable cloud infrastructure — automating deployments, provisioning IaC with Terraform, containerizing applications with Docker, and setting up CI/CD pipelines.
+
+Relevant experience:
+- AWS production architecture and security hardening
+- Containerization and orchestrating multi-service environments with Docker
+- Automated CI/CD pipelines via GitHub Actions with zero-downtime rollouts
+
+My approach:
+1. Review current architecture, environment configs, and immediate pain points
+2. Define infrastructure as code (Terraform) or streamline automation scripts
+3. Test end-to-end deployment in staging before touching production
+4. Document the setup thoroughly for straightforward ongoing maintenance
+
+Happy to discuss your setup and get this resolved efficiently.
+
+Best,
+Maxx"""
+
+
+def _proposal_ai_integration(title: str, problem: str) -> str:
+    return f"""Subject: AI & LLM Integration Engineer — {title[:60]}
+
+Hi there,
+
+I read your post about {problem[:100].lower()}. I design and integrate AI systems — building autonomous agent workflows, LLM API integrations (OpenAI / Claude), RAG pipelines, and automated data processing tools.
+
+Relevant experience:
+- Building production tool-calling agents and LLM orchestration workflows
+- Vector database / RAG integrations for contextual domain knowledge
+- Robust API error handling, prompt engineering, and structured JSON parsing
+
+My approach:
+1. Clarify the prompt flow, schemas, and target LLM models/tools
+2. Implement a working proof-of-concept with clear evaluations
+3. Add resilient fallback logic and structured validation
+4. Deliver clean, maintainable Python/FastAPI code with documentation
+
+Happy to discuss your workflow and explore the best architecture for this.
+
+Best,
+Maxx"""
+
+
 def _proposal_generic(title: str, problem: str) -> str:
     return f"""Subject: {title[:60]}
 
@@ -550,7 +618,8 @@ def _split_subject_body(proposal_text: str, fallback_title: str) -> tuple[str, s
     return fallback_title[:80], proposal_text
 
 
-def _match_portfolio_references(job: dict[str, Any]) -> list[dict[str, str]]:
+def match_portfolio_references(job: dict[str, Any]) -> list[dict[str, str]]:
+    """Match portfolio project references against job title, description, and skills."""
     skills_text = " ".join(job.get("skills", [])).lower()
     haystack = f"{job.get('title', '')} {job.get('description', '')} {skills_text}".lower()
     matches: list[dict[str, str]] = []
@@ -562,6 +631,9 @@ def _match_portfolio_references(job: dict[str, Any]) -> list[dict[str, str]]:
                 "description": str(ref["description"]),
             })
     return matches[:3]
+
+
+_match_portfolio_references = match_portfolio_references
 
 
 def _score_reasoning(job: dict[str, Any]) -> list[str]:
@@ -624,7 +696,7 @@ def build_structured_proposal(
     now = _now_iso()
     score = int(job.get("_score", 0))
     subject, body = _split_subject_body(proposal_text, job.get("title", "UpWork Proposal"))
-    references = _match_portfolio_references(job)
+    references = match_portfolio_references(job)
     job_id = _stable_job_id(job)
 
     return {
