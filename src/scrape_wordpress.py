@@ -1,4 +1,4 @@
-"""Scrape multiple pages of WordPress jobs from UpWork.
+"""Scrape multiple pages of WordPress jobs from UpWork via ConfigurableScraper.
 
 Usage:
     uv run python -m src.scrape_wordpress --pages 10
@@ -10,11 +10,9 @@ from __future__ import annotations
 import argparse
 import logging
 import sys
-import time
-from pathlib import Path
 
-from src.config import load_config
-from src.orchestrator import UpWorkScraper
+from src.config_schema import load_profile_config
+from src.orchestrator import ConfigurableScraper
 
 logger = logging.getLogger(__name__)
 
@@ -39,73 +37,29 @@ def main(argv: list[str] | None = None) -> int:
         datefmt="%H:%M:%S",
     )
 
-    config = load_config()
-    output_dir = Path(str(config["output_dir"]))
+    profile = load_profile_config("configs/profiles/wordpress_multi_page.yaml")
+    profile.search.query = args.query
+    profile.search.max_pages = args.pages
+    profile.search.target_jobs = args.min_jobs
+    profile.search.delay_between_pages_seconds = args.delay
 
-    scraper = UpWorkScraper(
-        flaresolverr_url=str(config["flaresolverr_url"]),
-        proxy_file=str(config["proxy_file"]),
-        output_dir=str(config["output_dir"]),
-    )
+    with ConfigurableScraper(profile) as scraper:
+        result = scraper.run()
 
-    all_jobs: list = []
-    total_start = time.time()
+    if result.errors and not result.jobs:
+        print(f"\n❌ Error: {result.errors[0]}")
+        return 1
 
-    try:
-        for page in range(1, args.pages + 1):
-            print(f"\n{'='*60}")
-            print(f"📄 Page {page}/{args.pages}")
-            print(f"{'='*60}")
+    print(f"\n{'='*60}")
+    print("📊 FINAL RESULTS")
+    print(f"{'='*60}")
+    print(f"  Query: '{profile.search.query}'")
+    print(f"  Total jobs: {result.total_found}")
+    print(f"  Time: {result.elapsed_seconds:.0f}s ({result.elapsed_seconds/60:.1f} min)")
+    if result.output_path:
+        print(f"  💾 Saved: {result.output_path}")
 
-            result = scraper.search(
-                query=args.query,
-                page=page,
-                max_retries=3,
-            )
-
-            if result.errors:
-                print(f"  ❌ Error: {result.errors[0]}")
-                continue
-
-            jobs = result.jobs
-            all_jobs.extend(jobs)
-            elapsed = time.time() - total_start
-
-            print(f"  ✅ Found {len(jobs)} jobs on page {page}")
-            print(f"  📊 Running total: {len(all_jobs)} jobs in {elapsed:.0f}s")
-
-            if len(all_jobs) >= args.min_jobs:
-                print(f"\n🎯 Reached minimum {args.min_jobs} jobs — stopping early")
-                break
-
-            if page < args.pages:
-                print(f"  ⏳ Waiting {args.delay}s before next page...")
-                time.sleep(args.delay)
-
-        total_elapsed = time.time() - total_start
-        print(f"\n{'='*60}")
-        print("📊 FINAL RESULTS")
-        print(f"{'='*60}")
-        print(f"  Query: '{args.query}'")
-        print(f"  Pages scraped: {page}")
-        print(f"  Total jobs: {len(all_jobs)}")
-        print(f"  Time: {total_elapsed:.0f}s ({total_elapsed/60:.1f} min)")
-
-        # Save combined results
-        if all_jobs:
-            from src.output import save_jobs
-            combined_path = save_jobs(
-                jobs=all_jobs,
-                output_dir=output_dir,
-                query=f"{args.query}_all_pages",
-                page=1,
-            )
-            print(f"  💾 Saved: {combined_path}")
-
-        return 0
-
-    finally:
-        scraper.close()
+    return 0
 
 
 if __name__ == "__main__":
