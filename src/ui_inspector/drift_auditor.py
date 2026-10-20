@@ -171,8 +171,45 @@ class DriftAuditor:
         if reg.is_fragile:
             notes = reg.fragile_reason
 
-        # If zero matches
+        # If zero matches on primary selector
         if count == 0:
+            # If the selector is fragile (like a known typo or hash), report as BROKEN with suggested replacement
+            if reg.is_fragile:
+                status = "BROKEN"
+                suggested_replacement = self._find_replacement_for_broken(reg)
+                return SelectorAuditEntry(
+                    target_field=reg.target_field,
+                    view=reg.view,
+                    registered_selector=reg.css_selector,
+                    status=status,
+                    matched_count=0,
+                    notes=notes or "Fragile selector matched 0 elements in live DOM",
+                    suggested_replacement=suggested_replacement,
+                )
+
+            # Check if any fallback selector matches
+            fallback_matched: str | None = None
+            fallback_count: int = 0
+            for fb in reg.fallback_selectors:
+                fb_matches = self.selector.css(fb)
+                if fb_matches:
+                    fallback_matched = fb
+                    fallback_count = len(fb_matches)
+                    break
+
+            if fallback_matched:
+                status = "DEGRADED"
+                notes = f"Primary selector matched 0, but fallback selector matched ({fallback_count}x): {fallback_matched}"
+                return SelectorAuditEntry(
+                    target_field=reg.target_field,
+                    view=reg.view,
+                    registered_selector=reg.css_selector,
+                    status=status,
+                    matched_count=fallback_count,
+                    notes=notes,
+                    suggested_replacement=fallback_matched,
+                )
+
             status = "BROKEN"
             suggested_replacement = self._find_replacement_for_broken(reg)
             return SelectorAuditEntry(

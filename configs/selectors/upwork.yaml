@@ -1,0 +1,214 @@
+version: "1.0"
+site: "upwork"
+base_url: "https://www.upwork.com"
+
+# Rules for detecting 404, expired, private, or error page shells
+page_guards:
+  not_found_headings:
+    - "job not found"
+    - "this job is no longer available"
+    - "this job is private"
+    - "page not found"
+    - "we can't find the page"
+    - "access denied"
+  error_heading_selectors:
+    - "h1"
+    - "h2"
+    - "[data-test='error-title']"
+    - ".air3-alert"
+  detail_signal_selectors:
+    - "[data-cy='clock-timelog']"
+    - "[data-cy='fixed-price']"
+    - "[data-cy='expertise']"
+    - "[data-qa='client-location']"
+
+views:
+  search_listings:
+    container_selectors:
+      - "article.job-tile"
+      - "article[data-test*='JobTile']"
+    fields:
+      title:
+        selectors:
+          - "a[data-test*='job-tile-title-link']"
+        extract: "full_text"
+        required: true
+        description: "Anchor tag holding job title and relative URL"
+      url:
+        selectors:
+          - "a[data-test*='job-tile-title-link']"
+        extract: "attribute"
+        attribute: "href"
+        transforms:
+          - "normalize_job_url"
+        description: "Canonicalized job detail URL"
+      description:
+        selectors:
+          - "[data-test*='JobDescription'] p"
+          - "[data-test*='JobDescription']"
+        extract: "text"
+        description: "Snippet paragraph inside job description container"
+      budget:
+        selectors:
+          - "[data-test='is-fixed-price']"
+        extract: "full_text"
+        transforms:
+          - "strip_est_budget_prefix"
+        description: "Fixed-price estimated budget"
+      hourly_rate:
+        selectors:
+          - "[data-test='job-type-label'] strong"
+          - "[data-test='job-type-label']"
+        extract: "hourly_or_fixed_label"
+        description: "Hourly rate or budget label text"
+      experience_level:
+        selectors:
+          - "[data-test='experience-level'] strong"
+          - "[data-test='experience-level']"
+        extract: "text"
+        description: "Experience level (Intermediate, Expert, Entry level)"
+      duration:
+        selectors:
+          - "[data-test='duration-label']"
+        extract: "text"
+        transforms:
+          - "strip_est_time_prefix"
+        description: "Estimated duration for hourly contracts"
+      skills:
+        selectors:
+          - "[data-test='token'] span"
+          - ".air3-token span"
+        extract: "list"
+        description: "Skill tags listed on the card"
+      posted:
+        selectors:
+          - "[data-test='job-pubilshed-date'] span"
+          - "[data-test='job-published-date'] span"
+        extract: "text"
+        is_fragile: true
+        fragile_reason: "Includes legacy UpWork typo 'pubilshed' alongside corrected 'published'"
+        description: "Posted relative timestamp"
+      country:
+        selectors:
+          - "[data-qa='client-location']"
+          - "[data-test='client-country']"
+        extract: "text"
+        auth_only: true
+        description: "Client country/location on card"
+      proposals:
+        selectors:
+          - "[data-test='proposals-tier']"
+          - "[data-test='proposals']"
+        extract: "text"
+        auth_only: true
+        description: "Proposal count tier on card"
+      client_rating:
+        selectors:
+          - "[data-qa='client-rating']"
+          - "[data-test='client-rating']"
+        extract: "text"
+        transforms:
+          - "first_token_float"
+        auth_only: true
+        description: "Client rating float on card"
+
+  job_detail:
+    fields:
+      title:
+        selectors:
+          - "h1"
+          - ".air3-card-section h4"
+        extract: "full_text"
+        required: true
+        description: "Job headline on detail page"
+      description:
+        selectors:
+          - "[data-test='Description'] p.multiline-text"
+          - "[data-test='Description']"
+        extract: "full_text"
+        transforms:
+          - "strip_summary_prefix"
+        description: "Full multiline job description"
+      posted:
+        selectors:
+          - ".posted-on-line span"
+          - "[data-test='posted-on']"
+        extract: "text"
+        description: "Detailed posted timestamp line"
+      hourly_rate:
+        selectors:
+          - "[data-cy='clock-timelog']"
+        extract: "sibling_text"
+        sibling_child_tag: "strong"
+        join_with: " - "
+        description: "Hourly rate icon container with sibling <strong>"
+      budget:
+        selectors:
+          - "[data-cy='fixed-price']"
+        extract: "sibling_text"
+        sibling_child_tag: "strong"
+        description: "Fixed-price icon container with sibling <strong>"
+      experience_level:
+        selectors:
+          - "[data-cy='expertise']"
+        extract: "sibling_text"
+        sibling_child_tag: "strong"
+        description: "Expertise level icon container with sibling <strong>"
+      duration:
+        selectors:
+          - "[data-cy='duration2']"
+        extract: "sibling_text"
+        sibling_child_tag: "strong"
+        description: "Duration icon container with sibling <strong>"
+      hours_per_week:
+        selectors:
+          - "[data-cy='clock-hourly']"
+        extract: "sibling_text"
+        sibling_child_tag: "strong"
+        description: "Hours per week icon container with sibling <strong>"
+      skills:
+        selectors:
+          - "section[data-v-3b2c2248] .skills-list .air3-line-clamp"
+          - ".skills-list .air3-line-clamp"
+          - "[data-test='Skill'] span"
+          - ".air3-badge-highlight .air3-line-clamp"
+        extract: "list"
+        is_fragile: true
+        fragile_reason: "Hardcoded Vue scope hash data-v-3b2c2248 breaks whenever UpWork updates styles"
+        description: "Skills list on job detail page"
+      proposals:
+        selectors:
+          - "li.ca-item"
+        extract: "ca_item_value"
+        label_contains: "Proposals"
+        description: "Activity list item containing 'Proposals'"
+      client_rating:
+        selectors:
+          - ".air3-rating-background"
+          - "[data-qa='client-rating']"
+        extract: "full_text"
+        transforms:
+          - "rating_out_of_5_float"
+        description: "Client rating out of 5"
+      country:
+        selectors:
+          - "li[data-qa='client-location']"
+          - "[data-test='client-country']"
+        extract: "text"
+        description: "Client country/location item"
+      client_spent:
+        selectors:
+          - "[data-qa='client-spend']"
+          - "[data-test='client-spend']"
+        extract: "full_text"
+        transforms:
+          - "strip_total_suffix"
+        description: "Client total spent badge"
+      client_hires:
+        selectors:
+          - "[data-qa='client-hires']"
+          - "[data-test='client-hires']"
+        extract: "text"
+        transforms:
+          - "first_token_int"
+        description: "Client total hires badge"
