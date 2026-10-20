@@ -11,6 +11,7 @@ from src.adapters.flaresolverr_adapter import FlareSolverrAdapter
 from src.adapters.stealthy_adapter import StealthySessionAdapter
 from src.config_schema import (
     ScrapeProfileConfig,
+    SearchWorkflowConfig,
     TransportConfig,
     load_profile_config,
     load_selector_config,
@@ -20,8 +21,10 @@ from src.models import UpWorkJob
 from src.orchestrator import ConfigurableScraper
 from src.parser import ConfigurableDomParser
 from src.proposal_engine import (
+    generate_proposal,
     job_meets_proposal_threshold,
     load_jobs,
+    match_portfolio_references,
     parse_proposal_count,
     score_job,
 )
@@ -168,29 +171,58 @@ def test_load_selector_config_valid() -> None:
 
 
 def test_load_all_profile_configs() -> None:
-    profiles = [
-        "configs/profiles/default_search.yaml",
-        "configs/profiles/wordpress_latest_50.yaml",
-        "configs/profiles/wordpress_multi_page.yaml",
-        "configs/profiles/wordpress_top20_enriched.yaml",
-        "configs/profiles/laravel_latest_50.yaml",
-        "configs/profiles/laravel_multi_page.yaml",
-        "configs/profiles/laravel_top20_enriched.yaml",
-        "configs/profiles/dotnet_latest_50.yaml",
-        "configs/profiles/dotnet_multi_page.yaml",
-        "configs/profiles/dotnet_top20_enriched.yaml",
-        "configs/profiles/react_latest_50.yaml",
-        "configs/profiles/react_multi_page.yaml",
-        "configs/profiles/react_top20_enriched.yaml",
-        "configs/profiles/angular_latest_50.yaml",
-        "configs/profiles/angular_multi_page.yaml",
-        "configs/profiles/angular_top20_enriched.yaml",
-        "configs/profiles/authenticated_search.yaml",
-    ]
-    for p in profiles:
+    profile_dir = Path("configs/profiles")
+    profile_files = sorted(profile_dir.glob("*.yaml"))
+    assert len(profile_files) >= 30
+    for p in profile_files:
         cfg = load_profile_config(p)
         assert isinstance(cfg, ScrapeProfileConfig)
         assert cfg.name
+
+
+def test_search_workflow_effective_queries() -> None:
+    cfg1 = SearchWorkflowConfig(query="python developer")
+    assert cfg1.effective_queries() == ["python developer"]
+
+    cfg2 = SearchWorkflowConfig(
+        query="fallback",
+        queries=["python developer", "fastapi", "python developer", "  playwright  ", ""],
+    )
+    assert cfg2.effective_queries() == ["python developer", "fastapi", "playwright"]
+
+
+def test_build_search_url_facets() -> None:
+    profile = load_profile_config("configs/profiles/default_search.yaml")
+    profile.search.query = "python developer"
+    profile.search.sort = "recency"
+    profile.search.per_page = 50
+    profile.search.contractor_tier = [2, 3]
+    profile.search.contract_type = "hourly"
+    profile.search.proposal_tiers = ["0-4", "5-9"]
+    profile.transport.adapter = "flaresolverr"
+
+    scraper_fs = ConfigurableScraper(profile, adapter=MockTransportAdapter())
+    url_fs = scraper_fs.build_search_url("python developer", page=2)
+
+    assert "https://www.upwork.com/nx/search/jobs/?q=python+developer" in url_fs
+    assert "sort=recency" in url_fs
+    assert "per_page=50" in url_fs
+    assert "contractor_tier=2%2C3" in url_fs or "contractor_tier=2,3" in url_fs
+    assert "t=0" in url_fs
+    assert "page=2" in url_fs
+    # In flaresolverr adapter, &proposals= must be suppressed to avoid login redirects
+    assert "proposals=" not in url_fs
+
+    # With stealthy_session, proposals filter must be included
+    profile.transport.adapter = "stealthy_session"
+    scraper_ss = ConfigurableScraper(profile, adapter=MockTransportAdapter())
+    url_ss = scraper_ss.build_search_url("python developer", page=1)
+    assert "proposals=0-4%2C5-9" in url_ss or "proposals=0-4,5-9" in url_ss
+
+    # Fixed price contract type
+    profile.search.contract_type = "fixed"
+    url_fixed = scraper_ss.build_search_url("python developer", page=1)
+    assert "t=1" in url_fixed
 
 
 def test_transport_adapter_instances() -> None:
@@ -275,6 +307,43 @@ def test_configurable_scraper_pipeline_target_jobs(tmp_path: Path) -> None:
     loaded = load_jobs(result.output_path)
     assert len(loaded) == 1
     assert loaded[0]["title"] == "Python Engineer FastAPI"
+
+
+def test_multi_query_search_deduplication(tmp_path: Path) -> None:
+    profile = load_profile_config("configs/profiles/default_search.yaml")
+    profile.output.directory = str(tmp_path)
+    profile.search.queries = ["python", "django"]
+    profile.search.max_pages = 1
+    profile.search.delay_between_pages_seconds = 0.0
+
+    mock_adapter = MockTransportAdapter(SAMPLE_SEARCH_PAGE_HTML)
+    scraper = ConfigurableScraper(profile, adapter=mock_adapter)
+    result = scraper.run()
+
+    # Both queries were searched (2 search calls)
+    assert len(mock_adapter.fetch_calls) == 2
+    assert "q=python" in mock_adapter.fetch_calls[0].url
+    assert "q=django" in mock_adapter.fetch_calls[1].url
+
+    # Result has 2 jobs total because duplicates across queries were deduplicated by URL
+    assert result.total_found == 2
+    assert len(result.jobs) == 2
+
+
+def test_exclude_keywords_filtering(tmp_path: Path) -> None:
+    profile = load_profile_config("configs/profiles/default_search.yaml")
+    profile.output.directory = str(tmp_path)
+    profile.search.delay_between_pages_seconds = 0.0
+    profile.filters.exclude_keywords = ["fastapi", "homework"]
+
+    mock_adapter = MockTransportAdapter(SAMPLE_SEARCH_PAGE_HTML)
+    scraper = ConfigurableScraper(profile, adapter=mock_adapter)
+    result = scraper.run()
+
+    # Job 1 has FastAPI in title/skills/desc -> excluded
+    # Job 2 is WordPress Elementor Fix -> retained
+    assert result.total_found == 1
+    assert result.jobs[0].title == "WordPress Elementor Fix"
 
 
 def test_configurable_scraper_pipeline_with_enrichment(tmp_path: Path) -> None:
@@ -443,3 +512,46 @@ def test_cli_max_proposals_flags() -> None:
     assert pe_args.query == "wordpress"
     assert pe_args.max_proposals == 10
     assert pe_args.score_only is True
+
+
+def test_cli_wide_net_flags() -> None:
+    args = main_parse_args([
+        "--queries", "python scraper,fastapi,playwright",
+        "--per-page", "50",
+        "--exclude-keywords", "unpaid,homework",
+    ])
+    assert args.queries == "python scraper,fastapi,playwright"
+    assert args.per_page == 50
+    assert args.exclude_keywords == "unpaid,homework"
+
+
+def test_proposal_engine_expanded_stacks() -> None:
+    # DevOps job
+    devops_job = {
+        "title": "Senior AWS Infrastructure & Terraform Engineer",
+        "description": "We need someone to automate our AWS ECS clusters with Terraform and setup GitHub Actions.",
+        "skills": ["AWS", "Terraform", "Docker", "CI/CD"],
+        "hourly_rate": "$85.00/hr",
+        "client_spent": "$50K",
+    }
+    proposal_devops = generate_proposal(devops_job)
+    assert "DevOps & Cloud Infrastructure Engineer" in proposal_devops
+    assert "Terraform" in proposal_devops
+
+    refs_devops = match_portfolio_references(devops_job)
+    assert any("Cloud Infrastructure" in r["title"] for r in refs_devops)
+
+    # AI integration job
+    ai_job = {
+        "title": "Python AI Agent Developer with Claude and OpenAI",
+        "description": "Build an autonomous LLM agent workflow with RAG and LangChain in Python.",
+        "skills": ["Python", "OpenAI", "Claude", "RAG"],
+        "hourly_rate": "$75.00/hr",
+        "client_spent": "$20K",
+    }
+    proposal_ai = generate_proposal(ai_job)
+    assert "AI & LLM Integration Engineer" in proposal_ai
+    assert "Claude" in proposal_ai or "LLM" in proposal_ai
+
+    refs_ai = match_portfolio_references(ai_job)
+    assert any("AI Workflow Automation" in r["title"] for r in refs_ai)
