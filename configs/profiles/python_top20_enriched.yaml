@@ -1,0 +1,47 @@
+name: "python_top20_enriched"
+description: "Filter top 20 Python jobs from saved output, scrape full detail pages, and compute proposal scores"
+selectors_file: "configs/selectors/upwork.yaml"
+
+transport:
+  adapter: "flaresolverr"
+  proxy_mode: "rotation"
+  max_timeout_ms: 60000
+  max_retries: 3
+  retry_backoff_seconds: 2.0
+
+search:
+  mode: "from_saved_output"
+  query: "python"
+  sort: null
+  start_page: 1
+  max_pages: 1
+  target_jobs: null
+  delay_between_pages_seconds: 0.0
+  deduplicate_by_url: true
+
+filters:
+  required_keywords:
+    - "python"
+    - "fastapi"
+    - "django"
+    - "scraper"
+    - "playwright"
+    - "scrapy"
+    - "automation"
+  exclude_keywords: []
+  min_score: 40
+  max_posted_age_days: 14
+  max_proposals: 15
+
+enrichment:
+  enabled: true
+  max_jobs_to_enrich: 20
+  detail_retries: 2
+  delay_between_details_seconds: 2.0
+  compute_proposal_scores: true
+
+output:
+  directory: "output"
+  filename_prefix: "upwork_python_enriched_top20"
+  save_per_page: false
+  save_combined: true

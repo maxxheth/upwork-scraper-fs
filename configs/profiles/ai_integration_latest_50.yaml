@@ -1,0 +1,45 @@
+name: "ai_integration_latest_50"
+description: "Scrape the latest 50 AI, Claude/OpenAI API, and LLM automation jobs via FlareSolverr"
+selectors_file: "configs/selectors/upwork.yaml"
+
+transport:
+  adapter: "flaresolverr"
+  proxy_mode: "direct"
+  max_timeout_ms: 60000
+  max_retries: 3
+  retry_backoff_seconds: 2.0
+
+search:
+  mode: "live_search"
+  query: "claude api"
+  queries:
+    - "claude api"
+    - "openai api"
+    - "ai agent python"
+    - "llm integration"
+  sort: "recency"
+  per_page: 50
+  start_page: 1
+  max_pages: 1
+  target_jobs: 50
+  delay_between_pages_seconds: 5.0
+  deduplicate_by_url: true
+
+filters:
+  required_keywords: []
+  exclude_keywords: []
+  min_score: null
+  max_posted_age_days: null
+
+enrichment:
+  enabled: false
+  max_jobs_to_enrich: null
+  detail_retries: 2
+  delay_between_details_seconds: 2.0
+  compute_proposal_scores: false
+
+output:
+  directory: "output"
+  filename_prefix: "ai_integration_latest_50"
+  save_per_page: false
+  save_combined: true

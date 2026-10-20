@@ -24,6 +24,7 @@ filters:
     - "wordpress"
   min_score: 40
   max_posted_age_days: 21
+  max_proposals: 15
 
 enrichment:
   enabled: true

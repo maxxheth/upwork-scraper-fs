@@ -1,0 +1,43 @@
+name: "all_stacks_sniper_enriched"
+description: "Score harvested jobs across all stacks, enrich top 25 details, and filter to <= 15 proposals"
+selectors_file: "configs/selectors/upwork.yaml"
+
+transport:
+  adapter: "flaresolverr"
+  proxy_mode: "rotation"
+  max_timeout_ms: 60000
+  max_retries: 3
+  retry_backoff_seconds: 2.0
+
+search:
+  mode: "from_saved_output"
+  query: "all_stacks"
+  sort: null
+  start_page: 1
+  max_pages: 1
+  target_jobs: null
+  delay_between_pages_seconds: 0.0
+  deduplicate_by_url: true
+
+filters:
+  required_keywords: []
+  exclude_keywords:
+    - "unpaid"
+    - "homework"
+    - "tutor"
+  min_score: 45
+  max_posted_age_days: 7
+  max_proposals: 15
+
+enrichment:
+  enabled: true
+  max_jobs_to_enrich: 25
+  detail_retries: 2
+  delay_between_details_seconds: 2.0
+  compute_proposal_scores: true
+
+output:
+  directory: "output"
+  filename_prefix: "upwork_all_stacks_sniper_top25"
+  save_per_page: false
+  save_combined: true

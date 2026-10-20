@@ -1,0 +1,53 @@
+name: "all_stacks_wide_harvester"
+description: "Cast the widest net across WordPress, Python/Scraping, Golang, DevOps/AWS, and Full-Stack with 50 cards/page"
+selectors_file: "configs/selectors/upwork.yaml"
+
+transport:
+  adapter: "flaresolverr"
+  proxy_mode: "rotation"
+  max_timeout_ms: 60000
+  max_retries: 3
+  retry_backoff_seconds: 2.0
+
+search:
+  mode: "live_search"
+  query: "wordpress developer"
+  queries:
+    - "wordpress developer"
+    - "woocommerce fix"
+    - "python scraper"
+    - "fastapi developer"
+    - "golang developer"
+    - "aws terraform"
+    - "laravel developer"
+    - "react typescript"
+  sort: "recency"
+  per_page: 50
+  contractor_tier: [2, 3]
+  start_page: 1
+  max_pages: 2
+  target_jobs: 400
+  delay_between_pages_seconds: 4.0
+  deduplicate_by_url: true
+
+filters:
+  required_keywords: []
+  exclude_keywords:
+    - "unpaid"
+    - "homework"
+    - "tutor"
+  min_score: null
+  max_posted_age_days: 7
+
+enrichment:
+  enabled: false
+  max_jobs_to_enrich: null
+  detail_retries: 2
+  delay_between_details_seconds: 2.0
+  compute_proposal_scores: false
+
+output:
+  directory: "output"
+  filename_prefix: "upwork_wide_harvest"
+  save_per_page: false
+  save_combined: true
