@@ -25,6 +25,10 @@ Scrapling Selector ──► Structured job data ──► JSON output
 # Install deps
 uv sync
 
+# Start FlareSolverr container
+./flaresolverr.sh start
+# Verify readiness: ./flaresolverr.sh status
+
 # Copy env and proxies
 cp .env.example .env
 # Edit .env if needed
@@ -35,6 +39,25 @@ uv run python -m src.main --query "golang developer"
 uv run python -m src.main --query "python" --page 2 --verbose
 ```
 
+## FlareSolverr Management
+
+Manage the container lifecycle via the helper script:
+
+```bash
+./flaresolverr.sh start     # Start container (creates if not existing)
+./flaresolverr.sh stop      # Stop container
+./flaresolverr.sh restart   # Restart container & poll readiness
+./flaresolverr.sh status    # Check container state & HTTP health check
+./flaresolverr.sh logs -f   # Tail container logs
+./flaresolverr.sh rm        # Stop & remove container
+```
+
+Overrides can be configured in `.env` or set as environment variables:
+- `FLARESOLVERR_PORT` (default: 8193)
+- `FLARESOLVERR_CONTAINER_NAME` (default: `flaresolverr`)
+- `FLARESOLVERR_IMAGE` (default: `ghcr.io/flaresolverr/flaresolverr:latest`)
+- `FLARESOLVERR_LOG_LEVEL` (default: `info`)
+
 ## Requirements
 
 - FlareSolverr running on `localhost:8193` (or set `FLARESOLVERR_URL` in `.env`)
@@ -43,6 +66,7 @@ uv run python -m src.main --query "python" --page 2 --verbose
 ## Linting & Type Checking
 
 ```bash
-uv run ruff check src/
-uv run pyright src/
+uv run ruff check src/ tests/
+uv run pyright src/ tests/
+uv run pytest -v
 ```
