@@ -1,0 +1,38 @@
+name: "wordpress_multi_page"
+description: "Scrape up to 10 pages of WordPress jobs (target 200 jobs) via FlareSolverr with proxy rotation"
+selectors_file: "configs/selectors/upwork.yaml"
+
+transport:
+  adapter: "flaresolverr"
+  proxy_mode: "rotation"
+  max_timeout_ms: 60000
+  max_retries: 3
+  retry_backoff_seconds: 2.0
+
+search:
+  mode: "live_search"
+  query: "wordpress"
+  sort: null
+  start_page: 1
+  max_pages: 10
+  target_jobs: 200
+  delay_between_pages_seconds: 15.0
+  deduplicate_by_url: true
+
+filters:
+  required_keywords: []
+  min_score: null
+  max_posted_age_days: null
+
+enrichment:
+  enabled: false
+  max_jobs_to_enrich: null
+  detail_retries: 2
+  delay_between_details_seconds: 2.0
+  compute_proposal_scores: false
+
+output:
+  directory: "output"
+  filename_prefix: "wordpress_all_pages"
+  save_per_page: true
+  save_combined: true

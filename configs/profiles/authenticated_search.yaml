@@ -1,0 +1,42 @@
+name: "authenticated_search"
+description: "Scrape search listings using a persistent StealthySession (Chrome profile + sticky proxy)"
+selectors_file: "configs/selectors/upwork.yaml"
+
+transport:
+  adapter: "stealthy_session"
+  proxy_mode: "pinned"
+  proxy_index: 0
+  max_timeout_ms: 60000
+  max_retries: 2
+  retry_backoff_seconds: 3.0
+  auto_scroll: true
+  max_scrolls: 4
+  scroll_delay_ms: 1200
+
+search:
+  mode: "live_search"
+  query: "python"
+  sort: "recency"
+  start_page: 1
+  max_pages: 1
+  target_jobs: null
+  delay_between_pages_seconds: 5.0
+  deduplicate_by_url: true
+
+filters:
+  required_keywords: []
+  min_score: null
+  max_posted_age_days: null
+
+enrichment:
+  enabled: false
+  max_jobs_to_enrich: null
+  detail_retries: 2
+  delay_between_details_seconds: 2.0
+  compute_proposal_scores: false
+
+output:
+  directory: "output"
+  filename_prefix: "upwork_authenticated_search"
+  save_per_page: false
+  save_combined: true
