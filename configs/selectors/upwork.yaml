@@ -99,7 +99,9 @@ views:
         selectors:
           - "[data-test='proposals-tier']"
           - "[data-test='proposals']"
-        extract: "text"
+        extract: "full_text"
+        transforms:
+          - "clean_proposals_text"
         auth_only: true
         description: "Proposal count tier on card"
       client_rating:
@@ -179,8 +181,12 @@ views:
       proposals:
         selectors:
           - "li.ca-item"
+          - ".client-activity-items li.ca-item"
+          - "[data-test='proposals-tier']"
         extract: "ca_item_value"
         label_contains: "Proposals"
+        transforms:
+          - "clean_proposals_text"
         description: "Activity list item containing 'Proposals'"
       client_rating:
         selectors:

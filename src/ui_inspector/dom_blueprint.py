@@ -198,6 +198,12 @@ def extract_job_card_blueprint(root: HtmlElement) -> JobCardUIBlueprint | None:
                     if isinstance(s, HtmlElement)
                 ]
 
+            proposal_nodes = card.xpath(
+                ".//*[@data-test='proposals-tier']//strong | .//*[@data-test='proposals-tier'] | .//*[@data-test='proposals']"
+            )
+            if proposal_nodes and isinstance(proposal_nodes[0], HtmlElement):
+                sample_data["proposals"] = " ".join("".join(proposal_nodes[0].itertext()).split())
+
     return JobCardUIBlueprint(
         container_selector="article.job-tile",
         total_cards_detected=total_cards,

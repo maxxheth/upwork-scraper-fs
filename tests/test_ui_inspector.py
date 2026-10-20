@@ -36,6 +36,7 @@ SAMPLE_SEARCH_HTML = """
         <!-- Authenticated UI extra fields -->
         <span data-qa="payment-verified">Payment Verified</span>
         <span data-qa="client-rating">4.9 of 5 stars</span>
+        <span data-test="proposals-tier"><strong>5 to 10</strong></span>
     </article>
 </main>
 </body>
@@ -96,6 +97,7 @@ SAMPLE_JOB_DETAIL_HTML = """
     <ul>
         <li class="ca-item">
             <span class="title">Proposals:</span>
+            <span class="help-icon"><span data-test="popper">Close the tooltipThis range includes relevant proposals</span></span>
             <span class="value">10 to 15</span>
         </li>
     </ul>
@@ -121,6 +123,7 @@ def test_build_page_blueprint_search() -> None:
     assert blueprint.job_card_blueprint is not None
     assert blueprint.job_card_blueprint.total_cards_detected == 1
     assert blueprint.job_card_blueprint.sample_card_data.get("title") == "Senior WordPress Developer"
+    assert blueprint.job_card_blueprint.sample_card_data.get("proposals") == "5 to 10"
 
     hook_names = [h.name for h in blueprint.all_hooks]
     assert "job-tile-title-link" in hook_names
@@ -145,6 +148,10 @@ def test_drift_auditor_healthy_and_fragile() -> None:
     assert "title_and_url" in healthy_fields
     assert "description" in healthy_fields
     assert "hourly_rate" in healthy_fields
+    assert "proposals" in healthy_fields
+
+    proposals_audit = next(a for a in report.audits if a.target_field == "proposals")
+    assert proposals_audit.sample_extracted_value == "5 to 10"
 
     candidate_names = [c.hook_name for c in report.discovered_candidates]
     assert "payment-verified" in candidate_names or "client-rating" in candidate_names
@@ -181,6 +188,11 @@ def test_job_detail_blueprint_and_sibling_resolution() -> None:
     rate_audit = next(a for a in report.audits if a.target_field == "hourly_rate")
     assert rate_audit.status == "HEALTHY"
     assert "$45 - $65" in str(rate_audit.sample_extracted_value)
+
+    # Proposals should be extracted cleanly via ca_item_value without tooltip text
+    proposals_audit = next(a for a in report.audits if a.target_field == "proposals")
+    assert proposals_audit.status == "HEALTHY"
+    assert proposals_audit.sample_extracted_value == "10 to 15"
 
     # Skills should be flagged as FRAGILE because of data-v-3b2c2248
     skills_audit = next(a for a in report.audits if a.target_field == "skills")

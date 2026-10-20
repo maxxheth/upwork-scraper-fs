@@ -222,7 +222,7 @@ class DriftAuditor:
                 suggested_replacement=suggested_replacement,
             )
 
-        # Evaluate sample text (including sibling resolution if defined)
+        # Evaluate sample text (including sibling or ca_item_value resolution if defined)
         sample_val = self._extract_sample_value(matches, reg)
 
         # If fragile (even if matching)
@@ -278,11 +278,21 @@ class DriftAuditor:
         )
 
     def _extract_sample_value(self, matches: list[Selector], reg: RegisteredSelector) -> Any:
-        """Extract multi-element values or handle parent-sibling resolution for icon containers."""
+        """Extract multi-element values or handle parent-sibling / ca_item_value resolution."""
         if not matches:
             return ""
 
         try:
+            # Handle activity list items (e.g. li.ca-item for Proposals)
+            if reg.extract_mode == "ca_item_value":
+                label_req = reg.label_contains or ""
+                for li in matches:
+                    title_span = li.css("span.title")
+                    if title_span and label_req in title_span[0].text.strip():
+                        val_span = li.css("span.value")
+                        if val_span and val_span[0].text:
+                            return val_span[0].text.strip()[:100]
+
             # Handle sibling child resolution (used in src/parser.py for [data-cy] icon tags)
             if reg.sibling_child_tag:
                 icon_el = matches[0]
@@ -304,6 +314,8 @@ class DriftAuditor:
                 return f"<{cls_val}>"
 
             first_text = matches[0].text.strip() if matches[0].text else ""
+            if not first_text:
+                first_text = re.sub(r"\s+", " ", matches[0].get_all_text().strip())
             return first_text[:100]
         except Exception:
             return ""

@@ -21,6 +21,8 @@ class RegisteredSelector:
     fragile_reason: str = ""
     auth_only: bool = False
     expected_type: Literal["text", "list", "number", "element"] = "text"
+    extract_mode: str = "text"
+    label_contains: str | None = None
     sibling_child_tag: str | None = None  # If text lives in a sibling's child (e.g. icon container + sibling <strong>)
     join_with: str | None = None  # Join multi-element values (e.g. "$25 - $50")
 
@@ -71,6 +73,8 @@ def build_registry_from_yaml(
                     fragile_reason=rule.fragile_reason,
                     auth_only=rule.auth_only,
                     expected_type=exp_type,
+                    extract_mode=rule.extract,
+                    label_contains=rule.label_contains,
                     sibling_child_tag=rule.sibling_child_tag,
                     join_with=rule.join_with,
                 )
@@ -98,6 +102,8 @@ def build_registry_from_yaml(
                     fragile_reason=rule.fragile_reason,
                     auth_only=rule.auth_only,
                     expected_type=exp_type,
+                    extract_mode=rule.extract,
+                    label_contains=rule.label_contains,
                     sibling_child_tag=rule.sibling_child_tag,
                     join_with=rule.join_with,
                 )
