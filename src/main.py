@@ -8,7 +8,8 @@ Usage:
     uv run python -m src.main --query "golang developer"
     uv run python -m src.main --query "python" --page 2
     uv run python -m src.main --query "rust" --with-details
-    uv run python -m src.main --adapter stealthy_session --query "wordpress"
+    uv run python -m src.main --query "wordpress" --max-proposals 15
+    uv run python -m src.main --adapter stealthy_session --query "wordpress" --max-proposals 10
 """
 
 from __future__ import annotations
@@ -92,6 +93,15 @@ def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
         help="Enrich jobs with detail pages (full description + client info)",
     )
     parser.add_argument(
+        "--max-proposals",
+        type=int,
+        default=None,
+        help=(
+            "Maximum allowed proposals upper-bound (e.g. 15 keeps 'Less than 5', '5 to 10', '10 to 15'). "
+            "Automatically enables detail-page enrichment if search cards lack proposal counts."
+        ),
+    )
+    parser.add_argument(
         "--max-retries",
         type=int,
         default=None,
@@ -165,6 +175,8 @@ def main(argv: list[str] | None = None) -> int:
         profile.transport.adapter = args.adapter
     if args.with_details:
         profile.enrichment.enabled = True
+    if args.max_proposals is not None:
+        profile.filters.max_proposals = args.max_proposals
     if args.max_retries is not None:
         profile.transport.max_retries = args.max_retries
 
@@ -207,10 +219,16 @@ def _run_legacy(args: argparse.Namespace) -> int:
     query = args.query or "golang developer"
     page = args.page or 1
     max_retries = args.max_retries or 3
+    max_proposals = args.max_proposals
 
     try:
-        if args.with_details:
-            result = scraper.search_with_details(query=query, page=page, max_retries=max_retries)
+        if args.with_details or max_proposals is not None:
+            result = scraper.search_with_details(
+                query=query,
+                page=page,
+                max_retries=max_retries,
+                max_proposals=max_proposals,
+            )
         else:
             result = scraper.search(query=query, page=page, max_retries=max_retries)
 

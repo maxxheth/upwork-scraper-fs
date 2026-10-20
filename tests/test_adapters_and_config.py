@@ -15,10 +15,19 @@ from src.config_schema import (
     load_profile_config,
     load_selector_config,
 )
+from src.main import parse_args as main_parse_args
 from src.models import UpWorkJob
 from src.orchestrator import ConfigurableScraper
 from src.parser import ConfigurableDomParser
-from src.proposal_engine import load_jobs
+from src.proposal_engine import (
+    job_meets_proposal_threshold,
+    load_jobs,
+    parse_proposal_count,
+    score_job,
+)
+from src.proposal_engine import (
+    parse_args as pe_parse_args,
+)
 from src.ui_inspector.selector_registry import CORE_PARSER_REGISTRY
 
 SAMPLE_SEARCH_PAGE_HTML = """
@@ -76,14 +85,42 @@ SAMPLE_DETAIL_PAGE_HTML = """
 </html>
 """
 
+SAMPLE_DETAIL_HIGH_PROPOSALS_HTML = """
+<!DOCTYPE html>
+<html>
+<head><title>WordPress Elementor Fix - UpWork</title></head>
+<body>
+  <h1>WordPress Elementor Fix</h1>
+  <div data-test="Description">
+    <p class="multiline-text">Summary Fix broken layout on Elementor header.</p>
+  </div>
+  <ul class="visitor client-activity-items list-unstyled">
+    <li class="ca-item">
+      <span class="title">Proposals:</span>
+      <span class="help-icon"><span data-test="popper">Close the tooltipThis range includes relevant proposals</span></span>
+      <span class="value">20 to 50</span>
+    </li>
+  </ul>
+  <li><div data-cy="fixed-price">icon</div><strong>$150.00</strong></li>
+  <li><div data-cy="expertise">icon</div><strong>Intermediate</strong></li>
+  <div class="skills-list"><span class="air3-line-clamp">WordPress</span></div>
+</body>
+</html>
+"""
+
 
 class MockTransportAdapter:
     """Mock transport adapter for deterministic pipeline testing."""
 
     adapter_name: str = "mock"
 
-    def __init__(self, canned_html: str = SAMPLE_SEARCH_PAGE_HTML) -> None:
+    def __init__(
+        self,
+        canned_html: str = SAMPLE_SEARCH_PAGE_HTML,
+        detail_map: dict[str, str] | None = None,
+    ) -> None:
         self.canned_html = canned_html
+        self.detail_map = detail_map or {}
         self.fetch_calls: list[FetchRequest] = []
         self.closed: bool = False
 
@@ -92,7 +129,12 @@ class MockTransportAdapter:
         if "/nx/search/" in request.url:
             html = self.canned_html
         elif "/jobs/" in request.url:
-            html = SAMPLE_DETAIL_PAGE_HTML
+            matched_detail = None
+            for key, val in self.detail_map.items():
+                if key in request.url:
+                    matched_detail = val
+                    break
+            html = matched_detail if matched_detail is not None else SAMPLE_DETAIL_PAGE_HTML
         else:
             html = self.canned_html
 
@@ -181,6 +223,8 @@ def test_configurable_dom_parser_search_listings() -> None:
     assert job1.duration == "3 to 6 months"
     assert job1.skills == ["Python", "FastAPI"]
     assert job1.country == "United States"
+    assert job1.proposals == "5 to 10"
+    assert job1.proposals_count == 10
     assert job1.client_rating == 4.9
 
     job2 = jobs[1]
@@ -189,6 +233,8 @@ def test_configurable_dom_parser_search_listings() -> None:
     assert job2.hourly_rate is None
     assert job2.experience_level == "Intermediate"
     assert job2.posted == "Posted 1 day ago"
+    assert job2.proposals is None
+    assert job2.proposals_count is None
 
 
 def test_configurable_dom_parser_job_detail() -> None:
@@ -200,6 +246,7 @@ def test_configurable_dom_parser_job_detail() -> None:
     assert detail.description == "We need an expert Python FastAPI developer to architect high-performance microservices."
     assert detail.hourly_rate == "$60.00 - $80.00"
     assert detail.proposals == "Less than 5"
+    assert detail.proposals_count == 4
     assert detail.client_spent == "10k"
     assert detail.client_hires == 12
     assert "Python" in detail.skills
@@ -314,3 +361,85 @@ def test_core_parser_registry_dynamic_population() -> None:
     # Check fallbacks are captured
     container_reg = next(r for r in CORE_PARSER_REGISTRY if r.target_field == "job_cards_container")
     assert len(container_reg.fallback_selectors) > 0
+
+
+def test_parse_proposal_count_and_upper_bound_thresholds() -> None:
+    assert parse_proposal_count("Less than 5") == 4
+    assert parse_proposal_count("Proposals: Less than 5") == 4
+    assert parse_proposal_count("5 to 10") == 10
+    assert parse_proposal_count("10 to 15") == 15
+    assert parse_proposal_count("15 to 20") == 20
+    assert parse_proposal_count("20 to 50") == 50
+    assert parse_proposal_count("50+") == 999
+    assert parse_proposal_count("12") == 12
+    assert parse_proposal_count(None) is None
+    assert parse_proposal_count("") is None
+
+    # Upper-bound threshold = 15
+    assert job_meets_proposal_threshold("Less than 5", 15) is True
+    assert job_meets_proposal_threshold("5 to 10", 15) is True
+    assert job_meets_proposal_threshold("10 to 15", 15) is True
+    assert job_meets_proposal_threshold("15 to 20", 15) is False
+    assert job_meets_proposal_threshold("20 to 50", 15) is False
+    assert job_meets_proposal_threshold("50+", 15) is False
+
+    # Upper-bound threshold = 50 includes "20 to 50" but excludes "50+"
+    assert job_meets_proposal_threshold("20 to 50", 50) is True
+    assert job_meets_proposal_threshold("50+", 50) is False
+
+    # Unknown handling
+    assert job_meets_proposal_threshold(None, 15, include_unknown=True) is True
+    assert job_meets_proposal_threshold(None, 15, include_unknown=False) is False
+
+    # Score job rewards "Less than 5" (10 pts) and "15 to 20" (7 pts)
+    assert score_job({"proposals": "Less than 5"}) == 10
+    assert score_job({"proposals": "10 to 15"}) == 10
+    assert score_job({"proposals": "15 to 20"}) == 7
+    assert score_job({"proposals": "20 to 50"}) == 5
+    assert score_job({"proposals": "50+"}) == 2
+
+
+def test_max_proposals_auto_enrichment_and_filtering(tmp_path: Path) -> None:
+    """When max_proposals is set and search cards lack proposals, Option B auto-enables detail enrichment
+    and filters out jobs whose detail page exceeds max_proposals."""
+    profile = load_profile_config("configs/profiles/default_search.yaml")
+    profile.output.directory = str(tmp_path)
+    profile.search.delay_between_pages_seconds = 0.0
+    profile.enrichment.enabled = False  # Starts disabled!
+    profile.enrichment.delay_between_details_seconds = 0.0
+    profile.filters.max_proposals = 15
+
+    # In SAMPLE_SEARCH_PAGE_HTML:
+    # - Job 1 ("Python Engineer FastAPI") has proposals="5 to 10" on card, detail has "Less than 5"
+    # - Job 2 ("WordPress Elementor Fix") has proposals=None on card, detail has "20 to 50"
+    mock_adapter = MockTransportAdapter(
+        canned_html=SAMPLE_SEARCH_PAGE_HTML,
+        detail_map={
+            "Python-Engineer-FastAPI": SAMPLE_DETAIL_PAGE_HTML,
+            "WordPress-Elementor-Fix": SAMPLE_DETAIL_HIGH_PROPOSALS_HTML,
+        },
+    )
+
+    scraper = ConfigurableScraper(profile, adapter=mock_adapter)
+    result = scraper.run()
+
+    # Auto-enrichment should have fetched detail pages (1 search + 2 detail calls = 3 calls)
+    assert len(mock_adapter.fetch_calls) == 3
+
+    # Job 2 ("20 to 50" proposals, upper bound 50 > 15) must be filtered out; Job 1 kept
+    assert result.total_found == 1
+    assert len(result.jobs) == 1
+    assert result.jobs[0].title == "Python Engineer FastAPI"
+    assert result.jobs[0].proposals == "Less than 5"
+    assert result.jobs[0].proposals_count == 4
+
+
+def test_cli_max_proposals_flags() -> None:
+    main_args = main_parse_args(["--query", "wordpress", "--max-proposals", "15"])
+    assert main_args.query == "wordpress"
+    assert main_args.max_proposals == 15
+
+    pe_args = pe_parse_args(["--query", "wordpress", "--max-proposals", "10", "--score-only"])
+    assert pe_args.query == "wordpress"
+    assert pe_args.max_proposals == 10
+    assert pe_args.score_only is True

@@ -16,8 +16,13 @@ from src.flaresolverr_client import FlareSolverrClient
 from src.models import UpWorkJob
 from src.output import save_jobs, save_jobs_with_prefix
 from src.parser import ConfigurableDomParser, parse_job_detail, parse_job_listings
+from src.proposal_engine import (
+    job_meets_proposal_threshold,
+     parse_posted_age,
+    parse_proposal_count,
+    score_job,
+)
 from src.proposal_engine import load_jobs as pe_load_jobs
-from src.proposal_engine import parse_posted_age, score_job
 
 logger = logging.getLogger(__name__)
 
@@ -87,11 +92,43 @@ class ConfigurableScraper:
         filtered_jobs = self._apply_filters(collected_jobs)
 
         # -------------------------------------------------------------------
-        # Stage 3: Detail Page Enrichment (optional)
+        # Stage 3: Detail Page Enrichment (explicit or auto-enabled for max_proposals)
         # -------------------------------------------------------------------
+        max_proposals = self.profile.filters.max_proposals
+        needs_proposal_enrichment = (
+            max_proposals is not None
+            and any(j.proposals is None for j in filtered_jobs)
+        )
+        should_enrich = self.profile.enrichment.enabled or needs_proposal_enrichment
+
         final_jobs = filtered_jobs
-        if self.profile.enrichment.enabled:
+        if should_enrich and filtered_jobs:
+            if needs_proposal_enrichment and not self.profile.enrichment.enabled:
+                logger.info(
+                    "Auto-enabling detail enrichment to resolve proposal counts for max_proposals=%d",
+                    max_proposals,
+                )
             final_jobs = self._run_enrichment(filtered_jobs)
+
+        # Enforce final upper-bound proposal threshold after enrichment
+        if max_proposals is not None:
+            before_count = len(final_jobs)
+            final_jobs = [
+                j
+                for j in final_jobs
+                if job_meets_proposal_threshold(
+                    j.proposals,
+                    max_proposals,
+                    include_unknown=False,
+                )
+            ]
+            dropped = before_count - len(final_jobs)
+            if dropped:
+                logger.info(
+                    "Filtered out %d jobs exceeding max_proposals=%d (or missing proposals)",
+                    dropped,
+                    max_proposals,
+                )
 
         result.jobs = final_jobs
         result.total_found = len(final_jobs)
@@ -194,6 +231,7 @@ class ConfigurableScraper:
         raw_jobs = pe_load_jobs(source)
         jobs: list[UpWorkJob] = []
         for r in raw_jobs:
+            proposals_val = r.get("proposals")
             jobs.append(
                 UpWorkJob(
                     title=r.get("title", ""),
@@ -206,7 +244,12 @@ class ConfigurableScraper:
                     skills=r.get("skills", []),
                     posted=r.get("posted"),
                     country=r.get("country"),
-                    proposals=r.get("proposals"),
+                    proposals=proposals_val,
+                    proposals_count=(
+                        r.get("proposals_count")
+                        if r.get("proposals_count") is not None
+                        else parse_proposal_count(proposals_val)
+                    ),
                     client_rating=r.get("client_rating"),
                     client_reviews=r.get("client_reviews"),
                     client_hires=r.get("client_hires"),
@@ -217,7 +260,7 @@ class ConfigurableScraper:
         return jobs
 
     def _apply_filters(self, jobs: list[UpWorkJob]) -> list[UpWorkJob]:
-        """Apply keyword, score, and age filters, sorting by proposal score when appropriate."""
+        """Apply keyword, proposal, score, and age filters, sorting by proposal score when appropriate."""
         filtered = jobs
 
         # Required keywords
@@ -236,6 +279,16 @@ class ConfigurableScraper:
                 j
                 for j in filtered
                 if (age := parse_posted_age(j.posted)) is None or age <= max_days
+            ]
+
+        # Pre-enrichment proposal count filter (drop cards already known to exceed max_proposals;
+        # keep unknown cards so Stage 3 detail enrichment can inspect their proposal count)
+        if self.profile.filters.max_proposals is not None:
+            max_p = self.profile.filters.max_proposals
+            filtered = [
+                j
+                for j in filtered
+                if job_meets_proposal_threshold(j.proposals, max_p, include_unknown=True)
             ]
 
         # Min score filtering & score sorting
@@ -299,6 +352,7 @@ class ConfigurableScraper:
                         job.country = detail.country
                     if detail.proposals:
                         job.proposals = detail.proposals
+                        job.proposals_count = detail.proposals_count
                     if detail.client_rating is not None:
                         job.client_rating = detail.client_rating
                     if detail.client_hires is not None:
@@ -364,8 +418,17 @@ class UpWorkScraper:
         query: str,
         page: int = 1,
         max_retries: int = 3,
+        max_proposals: int | None = None,
     ) -> ScrapeResult:
         """Search UpWork for jobs matching query."""
+        if max_proposals is not None:
+            return self.search_with_details(
+                query=query,
+                page=page,
+                max_retries=max_retries,
+                max_proposals=max_proposals,
+            )
+
         start = time.time()
         result = ScrapeResult(query=query)
 
@@ -462,14 +525,19 @@ class UpWorkScraper:
         page: int = 1,
         max_retries: int = 3,
         detail_retries: int = 2,
+        max_proposals: int | None = None,
     ) -> ScrapeResult:
-        """Search and enrich detail pages."""
+        """Search and enrich detail pages, optionally filtering by max_proposals."""
         search_result = self.search(query=query, page=page, max_retries=max_retries)
         if search_result.errors or not search_result.jobs:
             return search_result
 
         enriched: list[UpWorkJob] = []
         for job in search_result.jobs:
+            if max_proposals is not None and not job_meets_proposal_threshold(
+                job.proposals, max_proposals, include_unknown=True
+            ):
+                continue
             if not job.url:
                 enriched.append(job)
                 continue
@@ -480,6 +548,17 @@ class UpWorkScraper:
                 enriched.append(detail)
             else:
                 enriched.append(job)
+
+        if max_proposals is not None:
+            enriched = [
+                j
+                for j in enriched
+                if job_meets_proposal_threshold(
+                    j.proposals,
+                    max_proposals,
+                    include_unknown=False,
+                )
+            ]
 
         search_result.jobs = enriched
         search_result.total_found = len(enriched)

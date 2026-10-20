@@ -127,6 +127,7 @@ class FilterWorkflowConfig(BaseModel):
     required_keywords: list[str] = Field(default_factory=list)
     min_score: int | None = None
     max_posted_age_days: int | None = None
+    max_proposals: int | None = None
 
 
 class EnrichmentWorkflowConfig(BaseModel):
