@@ -16,15 +16,18 @@ from src.config_schema import (
     load_profile_config,
     load_selector_config,
 )
+from src.main import main
 from src.main import parse_args as main_parse_args
 from src.models import UpWorkJob
-from src.orchestrator import ConfigurableScraper
+from src.orchestrator import ConfigurableScraper, ScrapeResult
 from src.parser import ConfigurableDomParser
 from src.proposal_engine import (
     generate_proposal,
     job_meets_proposal_threshold,
+    keyword_matches,
     load_jobs,
     match_portfolio_references,
+    parse_posted_age,
     parse_proposal_count,
     score_job,
 )
@@ -78,12 +81,12 @@ SAMPLE_DETAIL_PAGE_HTML = """
     <p class="multiline-text">Summary We need an expert Python FastAPI developer to architect high-performance microservices.</p>
   </div>
   <li class="ca-item"><span class="title">Proposals:</span><span class="value">Less than 5</span></li>
-  <li><div data-cy="clock-timelog">icon</div><strong>$60.00 - $80.00</strong></li>
-  <li><div data-cy="expertise">icon</div><strong>Expert</strong></li>
-  <li><div data-cy="duration2">icon</div><strong>More than 6 months</strong></li>
-  <div class="skills-list"><span class="air3-line-clamp">Python</span><span class="air3-line-clamp">Docker</span></div>
-  <div data-qa="client-spend">10k total spent</div>
-  <div data-qa="client-hires">12 hires</div>
+  <li><div data-cy=\"clock-timelog\">icon</div><strong>$60.00 - $80.00</strong></li>
+  <li><div data-cy=\"expertise\">icon</div><strong>Expert</strong></li>
+  <li><div data-cy=\"duration2\">icon</div><strong>More than 6 months</strong></li>
+  <div class=\"skills-list\"><span class=\"air3-line-clamp\">Python</span><span class=\"air3-line-clamp\">Docker</span></div>
+  <div data-qa=\"client-spend\">10k total spent</div>
+  <div data-qa=\"client-hires\">12 hires</div>
 </body>
 </html>
 """
@@ -94,19 +97,19 @@ SAMPLE_DETAIL_HIGH_PROPOSALS_HTML = """
 <head><title>WordPress Elementor Fix - UpWork</title></head>
 <body>
   <h1>WordPress Elementor Fix</h1>
-  <div data-test="Description">
-    <p class="multiline-text">Summary Fix broken layout on Elementor header.</p>
+  <div data-test=\"Description\">
+    <p class=\"multiline-text\">Summary Fix broken layout on Elementor header.</p>
   </div>
-  <ul class="visitor client-activity-items list-unstyled">
-    <li class="ca-item">
-      <span class="title">Proposals:</span>
-      <span class="help-icon"><span data-test="popper">Close the tooltipThis range includes relevant proposals</span></span>
-      <span class="value">20 to 50</span>
+  <ul class=\"visitor client-activity-items list-unstyled\">
+    <li class=\"ca-item\">
+      <span class=\"title\">Proposals:</span>
+      <span class=\"help-icon\"><span data-test=\"popper\">Close the tooltipThis range includes relevant proposals</span></span>
+      <span class=\"value\">20 to 50</span>
     </li>
   </ul>
-  <li><div data-cy="fixed-price">icon</div><strong>$150.00</strong></li>
-  <li><div data-cy="expertise">icon</div><strong>Intermediate</strong></li>
-  <div class="skills-list"><span class="air3-line-clamp">WordPress</span></div>
+  <li><div data-cy=\"fixed-price\">icon</div><strong>$150.00</strong></li>
+  <li><div data-cy=\"expertise\">icon</div><strong>Intermediate</strong></li>
+  <div class=\"skills-list\"><span class=\"air3-line-clamp\">WordPress</span></div>
 </body>
 </html>
 """
@@ -555,3 +558,145 @@ def test_proposal_engine_expanded_stacks() -> None:
 
     refs_ai = match_portfolio_references(ai_job)
     assert any("AI Workflow Automation" in r["title"] for r in refs_ai)
+
+
+def test_keyword_matches_boundaries() -> None:
+    # Substring false positives avoided
+    assert keyword_matches("go", "Go backend developer needed") is True
+    assert keyword_matches("go", "Looking for Golang or Go engineers") is True
+    assert keyword_matches("go", "Django and PostgreSQL developer") is False
+    assert keyword_matches("go", "Good communication skills and Google Cloud experience") is False
+
+    assert keyword_matches("ai", "Building an AI agent") is True
+    assert keyword_matches("ai", "Send email and maintain codebase") is False
+    assert keyword_matches("ai", "Tailwind CSS styling") is False
+
+    # Punctuation / language symbols
+    assert keyword_matches("c#", "Senior C# backend engineer") is True
+    assert keyword_matches("c#", "C#/ASP.NET developer") is True
+    assert keyword_matches(".net", "Experienced in .NET 8 and C#") is True
+    assert keyword_matches(".net", "ASP.NET Core developer") is True
+    assert keyword_matches(".net", "Computer networking technician") is False
+
+    assert keyword_matches("ci/cd", "Setup CI/CD pipelines") is True
+    assert keyword_matches("next.js", "Build frontend with Next.js") is True
+
+
+def test_parse_posted_age_units() -> None:
+    assert parse_posted_age("Posted 15 minutes ago") == 0
+    assert parse_posted_age("Posted 45 mins ago") == 0
+    assert parse_posted_age("Just now") == 0
+    assert parse_posted_age("Today") == 0
+    assert parse_posted_age("Posted 2 hours ago") == 0
+    assert parse_posted_age("Posted 23 hours ago") == 0
+    assert parse_posted_age("Posted 25 hours ago") == 1
+    assert parse_posted_age("Yesterday") == 1
+    assert parse_posted_age("Posted 2 days ago") == 2
+    assert parse_posted_age("Posted 1 week ago") == 7
+    assert parse_posted_age("Posted 2 weeks ago") == 14
+    assert parse_posted_age("Posted 1 month ago") == 30
+    assert parse_posted_age(None) is None
+    assert parse_posted_age("") is None
+
+
+def test_score_job_fixed_price_budget() -> None:
+    # Fixed-price budget scoring tiers (includes +8 default proposals baseline when proposals missing)
+    assert score_job({"budget": "$2,500"}) == 28
+    assert score_job({"budget": "$1,000"}) == 28
+    assert score_job({"budget": "$750"}) == 23
+    assert score_job({"budget": "$500"}) == 23
+    assert score_job({"budget": "$300"}) == 18
+    assert score_job({"budget": "$200"}) == 18
+    assert score_job({"budget": "$100"}) == 13
+    assert score_job({"budget": "$50"}) == 13
+    # Explicit proposals upper bounds
+    assert score_job({"budget": "$1,000", "proposals": "Less than 5"}) == 30
+    assert score_job({"budget": "$500", "proposals": "15 to 20"}) == 22
+    assert score_job({"budget": "$200", "proposals": "50+"}) == 12
+    # Hourly rates remain intact
+    assert score_job({"hourly_rate": "$80.00/hr"}) == 33
+    assert score_job({"hourly_rate": "$100.00/hr"}) == 28
+    assert score_job({"hourly_rate": "$30.00/hr"}) == 18
+
+
+def test_exclude_and_required_keywords_with_skills(tmp_path: Path) -> None:
+    profile = load_profile_config("configs/profiles/default_search.yaml")
+    profile.output.directory = str(tmp_path)
+    profile.search.delay_between_pages_seconds = 0.0
+
+    # Test that required_keywords matches skills
+    profile.filters.required_keywords = ["fastapi"]
+    scraper = ConfigurableScraper(profile, adapter=MockTransportAdapter(SAMPLE_SEARCH_PAGE_HTML))
+    result = scraper.run()
+    # Job 1 has FastAPI in skills; Job 2 does not
+    assert result.total_found == 1
+    assert result.jobs[0].title == "Python Engineer FastAPI"
+
+    # Test that exclude_keywords filters out based on skills
+    profile.filters.required_keywords = []
+    profile.filters.exclude_keywords = ["wordpress"]
+    scraper2 = ConfigurableScraper(profile, adapter=MockTransportAdapter(SAMPLE_SEARCH_PAGE_HTML))
+    result2 = scraper2.run()
+    # Job 2 has WordPress in skills; Job 1 does not
+    assert result2.total_found == 1
+    assert result2.jobs[0].title == "Python Engineer FastAPI"
+
+
+def test_cli_query_override_clears_queries(monkeypatch: object, tmp_path: Path) -> None:
+    profile_file = tmp_path / "test_profile.yaml"
+    profile_file.write_text(
+        "name: test_profile\nsearch:\n  query: legacy_query\n  queries:\n    - python\n    - django\n"
+    )
+    captured_profile: ScrapeProfileConfig | None = None
+
+    class DummyScraper:
+        def __init__(self, profile: ScrapeProfileConfig, **_kwargs: object) -> None:
+            nonlocal captured_profile
+            captured_profile = profile
+
+        def run(self) -> ScrapeResult:
+            return ScrapeResult(query="fastapi", jobs=[], total_found=0, errors=[], output_path=None, elapsed_seconds=0.1)
+
+        def close(self) -> None:
+            pass
+
+    monkeypatch.setattr("src.main.ConfigurableScraper", DummyScraper)  # type: ignore[attr-defined]
+    ret = main(["--config", str(profile_file), "--query", "fastapi"])
+    assert ret == 0
+    assert captured_profile is not None
+    assert captured_profile.search.query == "fastapi"
+    assert captured_profile.search.queries == []
+
+
+def test_load_jobs_metadata_richness_merge(tmp_path: Path) -> None:
+    url = "https://www.upwork.com/jobs/Python-Engineer-FastAPI_~022111887415567641941/"
+    unenriched_job = {
+        "title": "Python Engineer FastAPI",
+        "url": url,
+        "description": "Short description",
+        "hourly_rate": "$50.00 - $75.00",
+    }
+    enriched_job = {
+        "title": "Python Engineer FastAPI",
+        "url": url,
+        "description": "We need an expert Python FastAPI developer to architect high-performance microservices.",
+        "hourly_rate": "$60.00 - $80.00",
+        "proposals": "Less than 5",
+        "proposals_count": 4,
+        "client_spent": "10k",
+        "client_hires": 12,
+        "skills": ["Python", "Docker", "FastAPI"],
+    }
+
+    file1 = tmp_path / "upwork_search_unenriched.json"
+    file1.write_text(json.dumps({"jobs": [unenriched_job], "query": "python"}))
+
+    file2 = tmp_path / "upwork_search_enriched.json"
+    file2.write_text(json.dumps({"jobs": [enriched_job], "query": "python"}))
+
+    loaded = load_jobs(tmp_path)
+    assert len(loaded) == 1
+    # Richer enriched job took precedence
+    assert loaded[0]["client_spent"] == "10k"
+    assert loaded[0]["proposals_count"] == 4
+    assert len(loaded[0]["skills"]) == 3
