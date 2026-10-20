@@ -10,6 +10,7 @@ Usage:
     uv run python -m src.main --query "rust" --with-details
     uv run python -m src.main --query "wordpress" --max-proposals 15
     uv run python -m src.main --adapter stealthy_session --query "wordpress" --max-proposals 10
+    uv run python -m src.main --queries "wordpress,woocommerce,acf" --per-page 50
 """
 
 from __future__ import annotations
@@ -52,6 +53,25 @@ def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
         type=str,
         default=None,
         help="Search query override",
+    )
+    parser.add_argument(
+        "--queries",
+        type=str,
+        default=None,
+        help="Comma-separated search queries (e.g. 'wordpress,woocommerce,acf')",
+    )
+    parser.add_argument(
+        "--per-page",
+        type=int,
+        choices=[10, 20, 50],
+        default=None,
+        help="Number of results per page (10, 20, or 50)",
+    )
+    parser.add_argument(
+        "--exclude-keywords",
+        type=str,
+        default=None,
+        help="Comma-separated keywords to filter out (e.g. 'unpaid,homework,tutor')",
     )
     parser.add_argument(
         "--page",
@@ -163,6 +183,14 @@ def main(argv: list[str] | None = None) -> int:
     # 2. Apply CLI overrides to profile
     if args.query is not None:
         profile.search.query = args.query
+    if args.queries is not None:
+        profile.search.queries = [q.strip() for q in args.queries.split(",") if q.strip()]
+    if args.per_page is not None:
+        profile.search.per_page = args.per_page
+    if args.exclude_keywords is not None:
+        profile.filters.exclude_keywords = [
+            k.strip() for k in args.exclude_keywords.split(",") if k.strip()
+        ]
     if args.page is not None:
         profile.search.start_page = args.page
     if args.max_pages is not None:
@@ -190,7 +218,7 @@ def main(argv: list[str] | None = None) -> int:
             if not result.jobs:
                 return 1
 
-        print(f"\n✅ Found {result.total_found} jobs for '{profile.search.query}'")
+        print(f"\n✅ Found {result.total_found} jobs for '{result.query}'")
         print(f"   Time: {result.elapsed_seconds:.1f}s")
         if result.output_path:
             print(f"   Saved: {result.output_path}")

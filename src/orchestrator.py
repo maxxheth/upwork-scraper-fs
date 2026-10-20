@@ -18,7 +18,7 @@ from src.output import save_jobs, save_jobs_with_prefix
 from src.parser import ConfigurableDomParser, parse_job_detail, parse_job_listings
 from src.proposal_engine import (
     job_meets_proposal_threshold,
-     parse_posted_age,
+    parse_posted_age,
     parse_proposal_count,
     score_job,
 )
@@ -68,10 +68,38 @@ class ConfigurableScraper:
         cfg = load_profile_config(profile_path)
         return cls(profile=cfg, adapter=adapter, parser=parser, base_config=base_config)
 
+    def build_search_url(self, query: str, page: int) -> str:
+        """Build canonical UpWork search URL honoring query, sort, density, and native facets."""
+        safe_query = urllib.parse.quote_plus(query)
+        url = f"https://www.upwork.com/nx/search/jobs/?q={safe_query}"
+        if self.profile.search.sort:
+            url += f"&sort={self.profile.search.sort}"
+        if self.profile.search.per_page:
+            url += f"&per_page={self.profile.search.per_page}"
+        if self.profile.search.contractor_tier:
+            tiers = ",".join(str(t) for t in self.profile.search.contractor_tier)
+            url += f"&contractor_tier={tiers}"
+        if self.profile.search.contract_type == "hourly":
+            url += "&t=0"
+        elif self.profile.search.contract_type == "fixed":
+            url += "&t=1"
+        if self.profile.search.proposal_tiers and self.profile.transport.adapter == "stealthy_session":
+            tiers = ",".join(self.profile.search.proposal_tiers)
+            url += f"&proposals={tiers}"
+        url += f"&page={page}"
+        return url
+
+    _build_search_url = build_search_url
+
     def run(self) -> ScrapeResult:
         """Execute the 4-stage scraping pipeline defined by the profile."""
         start_time = time.time()
-        result = ScrapeResult(query=self.profile.search.query)
+        effective_q = (
+            ", ".join(self.profile.search.effective_queries())
+            if self.profile.search.effective_queries()
+            else self.profile.search.query
+        )
+        result = ScrapeResult(query=effective_q)
         collected_jobs: list[UpWorkJob] = []
 
         # -------------------------------------------------------------------
@@ -82,9 +110,7 @@ class ConfigurableScraper:
         elif self.profile.search.mode == "from_saved_output":
             collected_jobs = self._run_from_saved_output()
         else:
-            result.errors.append(f"Unknown search mode: {self.profile.search.mode}")
-            result.elapsed_seconds = time.time() - start_time
-            return result
+            raise ValueError(f"Unknown search mode: {self.profile.search.mode}")
 
         # -------------------------------------------------------------------
         # Stage 2: Filtering & Pre-Enrichment Sorting
@@ -135,14 +161,14 @@ class ConfigurableScraper:
         result.elapsed_seconds = time.time() - start_time
 
         # -------------------------------------------------------------------
-        # Stage 4: Output Persistence (Standard SearchResult envelope)
+        # Stage 4: Output Persistence
         # -------------------------------------------------------------------
         if self.profile.output.save_combined and final_jobs:
             out_path = save_jobs_with_prefix(
                 jobs=final_jobs,
                 output_dir=self.output_dir,
                 filename_prefix=self.profile.output.filename_prefix,
-                query=self.profile.search.query,
+                query=effective_q,
                 page=1,
             )
             result.output_path = out_path
@@ -151,72 +177,77 @@ class ConfigurableScraper:
         return result
 
     def _run_live_search(self, result: ScrapeResult) -> list[UpWorkJob]:
-        """Iterate search result pages and extract job listings."""
+        """Iterate search queries and result pages, extracting and deduplicating job listings."""
         seen_urls: set[str] = set()
         jobs: list[UpWorkJob] = []
 
-        query = self.profile.search.query
-        safe_query = urllib.parse.quote_plus(query)
+        queries = self.profile.search.effective_queries()
         start_page = self.profile.search.start_page
         max_pages = self.profile.search.max_pages
         target = self.profile.search.target_jobs
 
-        for page in range(start_page, max_pages + 1):
-            url = f"https://www.upwork.com/nx/search/jobs/?q={safe_query}"
-            if self.profile.search.sort:
-                url += f"&sort={self.profile.search.sort}"
-            url += f"&page={page}"
-
-            logger.info("Fetching search page %d: %s", page, url)
-
-            fetch_req = FetchRequest(
-                url=url,
-                auto_scroll=self.profile.transport.auto_scroll,
-                max_scrolls=self.profile.transport.max_scrolls,
-                scroll_delay_ms=self.profile.transport.scroll_delay_ms,
-                timeout_ms=self.profile.transport.max_timeout_ms,
-                max_retries=self.profile.transport.max_retries,
-            )
-
-            resp = self.adapter.fetch(fetch_req)
-            if not resp.ok:
-                err_msg = resp.error or f"HTTP {resp.status}"
-                logger.warning("Search page %d failed: %s", page, err_msg)
-                result.errors.append(f"Page {page}: {err_msg}")
-                time.sleep(self.profile.search.delay_between_pages_seconds)
-                continue
-
-            page_jobs = self.parser.parse_job_listings(resp.html, session_id=resp.session_id)
-            logger.info("Page %d parsed %d job cards", page, len(page_jobs))
-
-            new_on_page = 0
-            for j in page_jobs:
-                if self.profile.search.deduplicate_by_url:
-                    if j.url and j.url in seen_urls:
-                        continue
-                    if j.url:
-                        seen_urls.add(j.url)
-
-                jobs.append(j)
-                new_on_page += 1
-
-                if target and len(jobs) >= target:
-                    break
-
-            if self.profile.output.save_per_page and page_jobs:
-                save_jobs_with_prefix(
-                    jobs=page_jobs,
-                    output_dir=self.output_dir,
-                    filename_prefix=f"{self.profile.output.filename_prefix}_p{page}",
-                    query=query,
-                    page=page,
-                )
-
+        for q_idx, query in enumerate(queries, 1):
             if target and len(jobs) >= target:
-                logger.info("Reached target of %d jobs — stopping early", target)
                 break
 
-            if page < max_pages and self.profile.search.delay_between_pages_seconds > 0:
+            logger.info("Searching query [%d/%d]: '%s'", q_idx, len(queries), query)
+
+            for page in range(start_page, max_pages + 1):
+                url = self.build_search_url(query=query, page=page)
+                logger.info("Fetching search page %d for '%s': %s", page, query, url)
+
+                fetch_req = FetchRequest(
+                    url=url,
+                    auto_scroll=self.profile.transport.auto_scroll,
+                    max_scrolls=self.profile.transport.max_scrolls,
+                    scroll_delay_ms=self.profile.transport.scroll_delay_ms,
+                    timeout_ms=self.profile.transport.max_timeout_ms,
+                    max_retries=self.profile.transport.max_retries,
+                )
+
+                resp = self.adapter.fetch(fetch_req)
+                if not resp.ok:
+                    err_msg = resp.error or f"HTTP {resp.status}"
+                    logger.warning("Search page %d failed for '%s': %s", page, query, err_msg)
+                    result.errors.append(f"Query '{query}' Page {page}: {err_msg}")
+                    time.sleep(self.profile.search.delay_between_pages_seconds)
+                    continue
+
+                page_jobs = self.parser.parse_job_listings(resp.html, session_id=resp.session_id)
+                logger.info("Page %d parsed %d job cards", page, len(page_jobs))
+
+                new_on_page = 0
+                for j in page_jobs:
+                    if self.profile.search.deduplicate_by_url:
+                        if j.url and j.url in seen_urls:
+                            continue
+                        if j.url:
+                            seen_urls.add(j.url)
+
+                    jobs.append(j)
+                    new_on_page += 1
+
+                    if target and len(jobs) >= target:
+                        break
+
+                if self.profile.output.save_per_page and page_jobs:
+                    prefix = f"{self.profile.output.filename_prefix}_q{q_idx}_p{page}"
+                    save_jobs_with_prefix(
+                        jobs=page_jobs,
+                        output_dir=self.output_dir,
+                        filename_prefix=prefix,
+                        query=query,
+                        page=page,
+                    )
+
+                if target and len(jobs) >= target:
+                    logger.info("Reached target of %d jobs — stopping early", target)
+                    break
+
+                if page < max_pages and self.profile.search.delay_between_pages_seconds > 0:
+                    time.sleep(self.profile.search.delay_between_pages_seconds)
+
+            if q_idx < len(queries) and self.profile.search.delay_between_pages_seconds > 0:
                 time.sleep(self.profile.search.delay_between_pages_seconds)
 
         return jobs
@@ -237,31 +268,27 @@ class ConfigurableScraper:
                     title=r.get("title", ""),
                     url=r.get("url", ""),
                     description=r.get("description", ""),
+                    hourly_rate=r.get("hourly_rate"),
                     budget=r.get("budget"),
                     experience_level=r.get("experience_level"),
                     duration=r.get("duration"),
-                    hourly_rate=r.get("hourly_rate"),
                     skills=r.get("skills", []),
-                    posted=r.get("posted"),
                     country=r.get("country"),
-                    proposals=proposals_val,
-                    proposals_count=(
-                        r.get("proposals_count")
-                        if r.get("proposals_count") is not None
-                        else parse_proposal_count(proposals_val)
-                    ),
+                    posted=r.get("posted"),
                     client_rating=r.get("client_rating"),
                     client_reviews=r.get("client_reviews"),
-                    client_hires=r.get("client_hires"),
                     client_spent=r.get("client_spent"),
-                    session_id=r.get("session_id"),
+                    client_hires=r.get("client_hires"),
+                    proposals=proposals_val,
+                    proposals_count=parse_proposal_count(proposals_val),
                 )
             )
+        logger.info("Loaded %d jobs from saved source: %s", len(jobs), source)
         return jobs
 
     def _apply_filters(self, jobs: list[UpWorkJob]) -> list[UpWorkJob]:
-        """Apply keyword, proposal, score, and age filters, sorting by proposal score when appropriate."""
-        filtered = jobs
+        """Apply keyword, recency, proposal count, and score threshold filters."""
+        filtered = list(jobs)
 
         # Required keywords
         if self.profile.filters.required_keywords:
@@ -270,6 +297,15 @@ class ConfigurableScraper:
                 j
                 for j in filtered
                 if any(k in j.title.lower() or k in j.description.lower() for k in keywords)
+            ]
+
+        # Exclude keywords
+        if self.profile.filters.exclude_keywords:
+            ex_keywords = [k.lower() for k in self.profile.filters.exclude_keywords]
+            filtered = [
+                j
+                for j in filtered
+                if not any(k in j.title.lower() or k in j.description.lower() for k in ex_keywords)
             ]
 
         # Max posted age days
@@ -321,19 +357,16 @@ class ConfigurableScraper:
                 enriched_list.append(job)
                 continue
 
-            clean_url = job.url.split("?")[0]
-            logger.info("[%d/%d] Enriching detail: %s", i, len(targets), job.title[:60])
-
-            fetch_req = FetchRequest(
-                url=clean_url,
+            logger.info("Enriching job [%d/%d]: %s", i, len(targets), job.url)
+            detail_req = FetchRequest(
+                url=job.url,
                 timeout_ms=self.profile.transport.max_timeout_ms,
                 max_retries=self.profile.enrichment.detail_retries,
             )
-            resp = self.adapter.fetch(fetch_req)
-            if resp.ok:
+            resp = self.adapter.fetch(detail_req)
+            if resp.ok and resp.html:
                 detail = self.parser.parse_job_detail(resp.html, session_id=resp.session_id)
                 if detail:
-                    # Merge full details
                     if detail.description:
                         job.description = detail.description
                     if detail.hourly_rate:

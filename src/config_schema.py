@@ -112,7 +112,12 @@ class SearchWorkflowConfig(BaseModel):
 
     mode: Literal["live_search", "from_saved_output"] = "live_search"
     query: str = "golang developer"
+    queries: list[str] = Field(default_factory=list)
     sort: Literal["recency", "relevance"] | None = None
+    per_page: Literal[10, 20, 50] | None = None
+    contractor_tier: list[Literal[1, 2, 3]] = Field(default_factory=list)
+    contract_type: Literal["hourly", "fixed"] | None = None
+    proposal_tiers: list[str] = Field(default_factory=list)
     start_page: int = 1
     max_pages: int = 1
     target_jobs: int | None = None
@@ -120,11 +125,18 @@ class SearchWorkflowConfig(BaseModel):
     deduplicate_by_url: bool = True
     input_saved_file: str | None = None
 
+    def effective_queries(self) -> list[str]:
+        """Return deduplicated list of search queries to execute."""
+        if self.queries:
+            return list(dict.fromkeys(q.strip() for q in self.queries if q.strip()))
+        return [self.query] if self.query else []
+
 
 class FilterWorkflowConfig(BaseModel):
     """Pre- or post-scoring candidate filters."""
 
     required_keywords: list[str] = Field(default_factory=list)
+    exclude_keywords: list[str] = Field(default_factory=list)
     min_score: int | None = None
     max_posted_age_days: int | None = None
     max_proposals: int | None = None
